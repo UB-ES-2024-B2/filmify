@@ -12,6 +12,8 @@
     "nuxt": "^3.10.0"
   },
   "dependencies": {
+    "@nuxt/image": "^1.8.1",
+    "nuxt-rating": "^0.1.5",
     "yup": "^1.4.0"
   }
 }
