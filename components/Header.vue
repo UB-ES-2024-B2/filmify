@@ -3,11 +3,11 @@
       <div class="container flex items-center justify-between h-full mx-auto flex-wrap">
         <NuxtLink
           :to="{ path: '/', hash: '#hero' }"
-          class="text-4xl font-bold dark:text-white text-purple-800 font-display"
+          class="text-3xl font-bold dark:text-white text-purple-800 font-display"
         >
           Filmly 🎞️
         </NuxtLink>
-        <div class="mx-5 flex-grow">
+        <div class="mx-2 flex-grow">
           <UInput
             color="purple"
             v-model="q"
@@ -29,7 +29,7 @@
             </template>
           </UInput>
         </div>
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2">
           <UButton :size="'md'" to="/login" color="purple" class="inline">Login</UButton>
           <UButton :size="'md'" to="/register" color="gray" class="inline">Sign Up</UButton>
         </div>
