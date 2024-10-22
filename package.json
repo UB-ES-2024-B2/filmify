@@ -9,9 +9,11 @@
   "devDependencies": {
     "@nuxt/ui": "^2.18.7",
     "@nuxtjs/supabase": "^0.3.1",
-    "nuxt": "^3.10.0"
+    "nuxt": "^3.13.2"
   },
   "dependencies": {
+    "@nuxt/image": "^1.8.1",
+    "nuxt-rating": "^0.1.5",
     "yup": "^1.4.0"
   }
 }

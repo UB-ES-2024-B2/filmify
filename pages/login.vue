@@ -1,40 +1,46 @@
 <template>
   <div class="DaoRb">
-    <h1 class="eSHwvX">Sign in</h1>
+    <h1 class="eSHwvX">Iniciar sesión</h1>
     <form @submit.prevent="login">
       <ErrorAlert :error-msg="authError" @clearError="clearError" />
       <div class="jGQTZC">
-        <label class="iJLvzO">
-          <div class="fdCSlG">
-            <input class="cmCuLh" type="text" placeholder="Email address" v-model="email" />
-          </div>
-        </label>
-        <label class="iJLvzO">
-          <div class="fdCSlG">
-            <input class="cmCuLh" type="password" placeholder="Password" v-model="password" />
-          </div>
-        </label>
+        <div class="fdCSlG">
+          <UInput 
+            class="cmCuLh" 
+            color="purple"
+            icon="i-heroicons-envelope"
+            type="text" 
+            placeholder="Correo electrónico" 
+            v-model="email" 
+          />
+        </div>
+        <div class="fdCSlG">
+          <UInput 
+            class="cmCuLh" 
+            color="purple"
+            icon="i-heroicons-lock-closed"
+            type="password" 
+            placeholder="Contraseña" 
+            v-model="password" 
+          />
+        </div>
       </div>
       <div class="jGQTZC">
-        <button class="gZMQdu" type="submit" :disabled="loading">
-          <div class="bjhGPG" :class="{loading: loading}">Sign in</div>
-          <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" class="jjoFVh" :class="{loading: loading}">
-            <g fill="none" stroke-width="1.5" stroke-linecap="round" class="faEWLr" style="stroke: var(--icon-color);">
-              <circle stroke-opacity=".2" cx="8" cy="8" r="6"></circle>
-              <circle cx="8" cy="8" r="6" class="VFMrX"></circle>
-            </g>
-          </svg>
-        </button>
-        <NuxtLink to="/forgot-password" class="fTZPOV">Forgot your password?</NuxtLink>
+        <UButton 
+          class="bjhGPG"
+          color="purple"
+          type="submit"  
+          :loading="loading">
+          Iniciar Sesion
+        </UButton>
+        <NuxtLink to="/forgot-password" class="fTZPOV block mt-4 text-sm text-gray-500 hover:underline">
+          ¿Olvidaste tu contraseña?
+        </NuxtLink>
       </div>
     </form>
-    <div class="jGQTZC">
-      <p class="dEDhcH">Don’t have a SupaAuth account?</p>
-      <NuxtLink to="/register">
-        <button class="lcqpaS">
-          <div class="bjhGPG">Create new account</div>
-        </button>
-      </NuxtLink>
+    <div class="text-center">
+    <span>¿No tienes cuenta? </span>
+    <router-link to="/register" class="text-purple-800 hover:underline">Registrarse</router-link>
     </div>
   </div>
 </template>
@@ -44,7 +50,7 @@ definePageMeta({
   layout: "auth"
 })
 useHead({
-  title: 'Login | supaAuth'
+  title: 'Iniciar sesión | Filmify',
 })
 const user = useSupabaseUser()
 const loading = ref(false)
@@ -67,7 +73,7 @@ const login = async () => {
   })
   if (error) {
     loading.value = false
-    authError.value = 'Invalid login credentials'
+    authError.value = 'Credenciales incorrectas'
     setTimeout(() => {
       authError.value = ''
     }, 5000)
@@ -78,3 +84,4 @@ const clearError = () => {
   authError.value = '';
 };
 </script>
+  
