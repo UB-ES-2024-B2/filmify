@@ -5,7 +5,7 @@
           :to="{ path: '/', hash: '#hero' }"
           class="text-3xl font-bold dark:text-white text-purple-800 font-display"
         >
-          Filmly 🎞️
+          Filmify 🎞️
         </NuxtLink>
         <div class="mx-2 flex-grow">
           <UInput
