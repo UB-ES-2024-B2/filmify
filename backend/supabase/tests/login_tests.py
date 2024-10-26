@@ -1,14 +1,14 @@
 from supabase import create_client, Client
 
 SUPABASE_URL = "https://ydzntmbvtktgeknydngv.supabase.co"
-SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlkem50bWJ2dGt0Z2Vrbnlkbmd2Iiwicm9zZSI6ImFub24iLCJpYXQiOjE3MjkwMTczODcsImV4cCI6MjA0NDU5MzM4N30.eM6tB5yhGYJrVAngp5XPRWmZmpWdAmlAfZ7XlCQV1N4"
+SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlkem50bWJ2dGt0Z2Vrbnlkbmd2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjkwMTczODcsImV4cCI6MjA0NDU5MzM4N30.eM6tB5yhGYJrVAngp5XPRWmZmpWdAmlAfZ7XlCQV1N4"
 
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 # Contador de aserciones pasadas y fallidas
 asserts_passed = 0
 asserts_failed = 0
-total_asserts = 6  # Cambia este número si agregas más pruebas
+total_asserts = 5  # Cambia este número si agregas más pruebas
 
 # Pruebas
 
