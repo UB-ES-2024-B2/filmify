@@ -51,7 +51,6 @@ except AssertionError:
 
 try:
     response = supabase.rpc("get_popular_movies_test", {'length': 5}).execute()
-    print(response.data)
     assert len(response.data) == 5
     assert response.data[0]['title'] == "Piratas del Caribe: La maldición de la Perla Negra"
     assert response.data[1]['title'] == "Buscando a Nemo"
