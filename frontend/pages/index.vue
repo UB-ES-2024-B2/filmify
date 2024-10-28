@@ -11,7 +11,7 @@
         :ui="{
           wrapper: 'w-full',
           container: 'gap-5',
-          item: 'h-[300px] w-[150px]',
+          item: 'h-[350px] w-[150px]',
         }"
         arrows
       >
@@ -26,7 +26,7 @@
         :ui="{
           wrapper: 'w-full',
           container: 'gap-5',
-          item: 'h-[300px] w-[150px]',
+          item: 'h-[350px] w-[150px]',
         }"
         arrows
       >
