@@ -30,8 +30,9 @@
           </UInput>
         </div>
         <div class="flex items-center gap-2">
-          <UButton :size="'md'" to="/login" color="purple" class="inline">Login</UButton>
-          <UButton :size="'md'" to="/register" color="gray" class="inline">Sign Up</UButton>
+          <UButton v-if="!user" :size="'md'" to="/login" color="purple" class="inline">Login</UButton>
+          <UButton v-if="!user" :size="'md'" to="/register" color="gray" class="inline">Sign Up</UButton>
+          <UButton v-else :size="'md'" @click="logout" color="purple" class="inline">Logout</UButton>
         </div>
       </div>
     </nav>
@@ -40,4 +41,10 @@
   
 <script setup lang="ts">
 const q = ref('')
+const supabase = useSupabaseClient()
+const user = useSupabaseUser()
+
+const logout = async () => {
+  await supabase.auth.signOut()
+}
 </script>
