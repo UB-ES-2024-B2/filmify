@@ -30,9 +30,11 @@
           </UInput>
         </div>
         <div class="flex items-center gap-2">
+          <div class="flex items-center gap-2">
           <UButton v-if="!user" :size="'md'" to="/login" color="purple" class="inline">Login</UButton>
           <UButton v-if="!user" :size="'md'" to="/register" color="gray" class="inline">Sign Up</UButton>
           <UButton v-else :size="'md'" @click="logout" color="purple" class="inline">Logout</UButton>
+          </div>
         </div>
       </div>
     </nav>
