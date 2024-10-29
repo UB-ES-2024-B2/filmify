@@ -7,4 +7,4 @@ node_modules
 dist
 .env
 .lock
-*.config*
+frontend/package-lock.json
