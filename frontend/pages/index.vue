@@ -7,11 +7,11 @@
       <UCarousel 
         class="px-10"
         v-slot="{ item, index }"
-        :items="items"
+        :items="newest_movies"
         :ui="{
           wrapper: 'w-full',
           container: 'gap-5',
-          item: 'h-[300px] w-[150px]',
+          item: 'h-[350px] w-[150px]',
         }"
         arrows
       >
@@ -22,11 +22,11 @@
       <UCarousel 
         class="px-10"
         v-slot="{ item, index }"
-        :items="items"
+        :items="popular_movies"
         :ui="{
           wrapper: 'w-full',
           container: 'gap-5',
-          item: 'h-[300px] w-[150px]',
+          item: 'h-[350px] w-[150px]',
         }"
         arrows
       >
@@ -37,6 +37,7 @@
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted } from 'vue';
 const client = useSupabaseAuthClient()
 const user = useSupabaseUser()
 const loading = ref(false)
@@ -61,57 +62,33 @@ definePageMeta({
   layout: "home"
 })
 
-const items = [
-  {
-    name: 'Joker',
-    poster: { src: "/img/joker.jpg" },
-    rating: 4.7,
-  },
-  {
-    name: 'Joker',
-    poster: { src: "/img/joker.jpg" },
-    rating: 4.7,
-  },
-  {
-    name: 'Joker',
-    poster: { src: "/img/joker.jpg" },
-    rating: 4.7,
-  },
-  {
-    name: 'Joker',
-    poster: { src: "/img/joker.jpg" },
-    rating: 4.7,
-  },
-  {
-    name: 'Joker',
-    poster: { src: "/img/joker.jpg" },
-    rating: 4.7,
-  },
-  {
-    name: 'Joker',
-    poster: { src: "/img/joker.jpg" },
-    rating: 4.7,
-  },
-  {
-    name: 'Joker',
-    poster: { src: "/img/joker.jpg" },
-    rating: 4.7,
-  },
-  {
-    name: 'Joker',
-    poster: { src: "/img/joker.jpg" },
-    rating: 4.7,
-  },
-  {
-    name: 'Joker',
-    poster: { src: "/img/joker.jpg" },
-    rating: 4.7,
-  },
-  {
-    name: 'Joker',
-    poster: { src: "/img/joker.jpg" },
-    rating: 4.7,
-  },
-];
+const newest_movies = ref([]);
 
+const fetchNewestMovies = async () => {
+
+  const { data, error } = await client.rpc('get_newest_movies',{length_movies: 15});
+
+
+  if (error) {
+    console.error('Error al obtener películas:', error);
+  } else {
+    newest_movies.value = data;
+  }
+};
+
+const popular_movies = ref([]);
+
+const fetchPopularMovies = async () => {
+
+  const { data, error } = await client.rpc('get_popular_movies',{length_movies: 15});
+
+  if (error) {
+    console.error('Error al obtener películas:', error);
+  } else {
+    popular_movies.value = data;
+  }
+};
+
+onMounted(fetchNewestMovies);
+onMounted(fetchPopularMovies);
 </script>
