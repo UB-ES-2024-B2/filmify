@@ -2,6 +2,8 @@
   <div class="DaoRb">
     <h1 class="eSHwvX">Regístrate</h1>
     <form @submit.prevent="signUp">
+      <SuccessAlert :success-msg="succAlert" @clearError="clearError" />
+      <ErrorAlert :error-msg="authError" @clearError="clearError" />
       <div class="jGQTZC">
         <!-- Campo de Usuario -->
         <div class="fdCSlG">
@@ -82,6 +84,8 @@ useHead({
 const email = ref('');
 const password = ref('');
 const username = ref('');
+const authError = ref('');
+const succAlert = ref('');
 const client = useSupabaseAuthClient();
 const user = useSupabaseUser();
 const loading = ref(false);
@@ -132,21 +136,29 @@ watch(password, (newVal) => {
   }
 });
 
+const clearError = () => {
+  authError.value = '';
+  succAlert.value = '';
+};
+
 // Función de registro
 const signUp = async () => {
   if (!isFormValid.value) return;
   loading.value = true;
-  const { error } = await client.auth.signUp({
-    email: email.value,
-    password: password.value,
-    options: {
-      data: {
-        username: username.value,
+  const { data } = await client.rpc('check_auth_email_exists', { email_input: email.value });
+  if(data){
+    authError.value = 'Email ya registrado';
+  } else {
+    const { error } = await client.auth.signUp({
+      email: email.value,
+      password: password.value,
+      options: {
+        data: {
+          username: username.value,
+        }
       }
-    }
-  });
-  if (error) {
-    fieldErrors.email = 'Error al crear cuenta';
+    });
+    succAlert.value = 'Registrado. Revisa correo.'
   }
   loading.value = false;
 };
