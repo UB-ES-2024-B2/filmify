@@ -1,7 +1,13 @@
+import os
+from dotenv import load_dotenv
 from supabase import create_client, Client
 
-SUPABASE_URL = "https://ydzntmbvtktgeknydngv.supabase.co"
-SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlkem50bWJ2dGt0Z2Vrbnlkbmd2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjkwMTczODcsImV4cCI6MjA0NDU5MzM4N30.eM6tB5yhGYJrVAngp5XPRWmZmpWdAmlAfZ7XlCQV1N4"
+# Load .env file from the parent directory
+load_dotenv(os.path.join(os.path.dirname(__file__), '../../../.env'))
+
+# Now you can access your environment variables
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
