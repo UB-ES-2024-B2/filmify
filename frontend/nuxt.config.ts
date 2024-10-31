@@ -1,3 +1,8 @@
+import dotenv from 'dotenv'
+
+// Load environment variables from a specific path
+dotenv.config({ path: '../.env' })
+
 export default defineNuxtConfig({
   modules: ['@nuxtjs/supabase', '@nuxt/ui', '@nuxtjs/tailwindcss', "nuxt-rating", "@nuxt/image"],
 
@@ -18,5 +23,5 @@ export default defineNuxtConfig({
         { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono&display=swap' },
       ]
     }
-  },
+  }
 })
