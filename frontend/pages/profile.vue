@@ -2,6 +2,27 @@
   <main class="px-10 overflow-y-auto dark:bg-slate-800 page xl:px-12">
     <section class="container mx-auto flex flex-col gap-5 items-center justify-center mt-6 scroll-mt-[120px] min-h-screen">
       <Profile />
+
+      <h2 class="text-2xl font-display">Favoritas</h2>
+      <template v-if="newest_movies.length > 0">
+        <UCarousel 
+          class="px-10"
+          v-slot="{ item, index }"
+          :items="newest_movies"
+          :ui="{
+            wrapper: 'w-full',
+            container: 'gap-5',
+            item: 'h-[350px] w-[150px]',
+          }"
+          arrows
+        >
+          <CarouselCard :item="item" :index="index" />
+        </UCarousel>
+      </template>
+      <template v-else>
+        <EmptyCarouselCard />
+      </template>
+
     </section>
   </main>
 </template>
