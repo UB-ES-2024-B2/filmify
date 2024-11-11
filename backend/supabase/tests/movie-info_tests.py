@@ -20,7 +20,6 @@ total_asserts = 5  # Cambia este número si agregas más pruebas
 # Pruebas
 
 # - Movie Details
-
 try:
     movie_id = 12
     response = supabase.rpc("get_movie_details", {'movie_id': movie_id}).execute()
@@ -29,3 +28,24 @@ try:
 except AssertionError:
     asserts_failed +=1
 
+
+# - Movie Genres
+try:
+    movie_id = 12
+    response = supabase.rpc("get_movie_genres", {'movie_id': movie_id}).execute()
+    assert response.data[0] == {'genre_id': 3, 'genre_name': 'Familia'}, {'genre_id': 14, 'genre_name': 'Animación'}
+    asserts_passed +=1
+except AssertionError:
+    asserts_failed +=1
+
+# - Movie Cast
+try:
+    movie_id = 12
+    response = supabase.rpc("get_movie_cast", {'movie_id': movie_id}).execute()
+    assert response.data == [{'actor_id': 4203, 'actor_name': 'Willem Dafoe'}, {'actor_id': 4619, 'actor_name': 'Allison Janney'}, {'actor_id': 4904, 'actor_name': 'Stephen Root'}, {'actor_id': 6151, 'actor_name': 'Brad Garrett'}, {'actor_id': 7473, 'actor_name': 'Geoffrey Rush'}, {'actor_id': 8581, 'actor_name': 'Albert Brooks'}, {'actor_id': 10196, 'actor_name': 'Ellen DeGeneres'}, {'actor_id': 10197, 'actor_name': 'Alexander Gould'}, {'actor_id': 10198, 'actor_name': 'Austin Pendleton'}, {'actor_id': 10199, 'actor_name': 'Vicki Lewis'}]
+    asserts_passed +=1
+except AssertionError:
+    asserts_failed +=1
+
+
+print(asserts_failed)
