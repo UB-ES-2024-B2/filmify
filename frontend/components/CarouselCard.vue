@@ -1,12 +1,17 @@
 <script setup>
-defineProps({
+const props = defineProps({
   item: Object,
   index: Number,
 });
+
+const goToDetails = () => {
+  navigateTo(`/movies/${props.item.id}`);
+};
 </script>
 
 <template>
   <div
+    @click="goToDetails"
     :class="`rounded-lg flex flex-col items-center bg-gray-200 shadow-lg cursor-pointer h-[350px] w-[150px] ${item.background}`"
   >
     <NuxtImg
