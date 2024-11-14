@@ -23,6 +23,26 @@
         <EmptyCarouselCard />
       </template>
 
+      <h2 class="text-2xl font-display">Wishlist</h2>
+      <template v-if="popular_movies.length > 0">
+        <UCarousel 
+          class="px-10"
+          v-slot="{ item, index }"
+          :items="popular_movies"
+          :ui="{
+            wrapper: 'w-full flex justify-center',
+            container: 'flex justify-center gap-5',
+            item: 'h-[350px] w-[150px]',
+          }"
+          arrows
+        >
+          <CarouselCard :item="item" :index="index" />
+        </UCarousel>
+      </template>
+      <template v-else>
+        <EmptyCarouselCard />
+      </template>
+
     </section>
   </main>
 </template>
