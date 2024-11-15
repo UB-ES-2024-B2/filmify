@@ -15,7 +15,7 @@ supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 # Contador de aserciones pasadas y fallidas
 asserts_passed = 0
 asserts_failed = 0
-total_asserts = 3  # Cambia este número si agregas más pruebas
+total_asserts = 5  # Cambia este número si agregas más pruebas
 
 # Pruebas
 
@@ -43,6 +43,24 @@ try:
     movie_id = 12
     response = supabase.rpc("get_movie_cast", {'movie_id': movie_id}).execute()
     assert response.data == [{'actor_id': 4203, 'actor_name': 'Willem Dafoe'}, {'actor_id': 4619, 'actor_name': 'Allison Janney'}, {'actor_id': 4904, 'actor_name': 'Stephen Root'}, {'actor_id': 6151, 'actor_name': 'Brad Garrett'}, {'actor_id': 7473, 'actor_name': 'Geoffrey Rush'}, {'actor_id': 8581, 'actor_name': 'Albert Brooks'}, {'actor_id': 10196, 'actor_name': 'Ellen DeGeneres'}, {'actor_id': 10197, 'actor_name': 'Alexander Gould'}, {'actor_id': 10198, 'actor_name': 'Austin Pendleton'}, {'actor_id': 10199, 'actor_name': 'Vicki Lewis'}]
+    asserts_passed +=1
+except AssertionError:
+    asserts_failed +=1
+
+# - Movie Director
+try:
+    movie_id = 12
+    response = supabase.rpc("get_movie_director", {'movie_id': movie_id}).execute()
+    assert response.data == [{'director_id': 716, 'director_name': 'Andrew Stanton'}]
+    asserts_passed +=1
+except AssertionError:
+    asserts_failed +=1
+
+# - Movie Language
+try:
+    movie_id = 12
+    response = supabase.rpc("get_movie_language", {'movie_id': movie_id}).execute()
+    assert response.data == [{'language_id': 1021, 'language_name': 'Inglés'}]
     asserts_passed +=1
 except AssertionError:
     asserts_failed +=1
