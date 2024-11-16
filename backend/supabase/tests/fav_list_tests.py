@@ -15,13 +15,23 @@ supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 # Contador de aserciones pasadas y fallidas
 asserts_passed = 0
 asserts_failed = 0
-total_asserts = 1  # Cambia este número si agregas más pruebas
+total_asserts = 2  # Cambia este número si agregas más pruebas
 
 # Como solo implementamos que se muestren las peliculas, hemos creado algunas relaciones ya en la base de datos.
 # En el siguente sprint implementaremos la funcionalidad que queda.
+
+# Usuario valido con lista de favoritos
 try:
     response = supabase.rpc("get_favorites", {'user_id': 'f3cf42e6-6380-4ed7-95c0-05eceae1022c'}).execute()
-    assert response.data == [{'id': 12, 'title': 'Buscando a Nemo', 'poster_url': 'https://image.tmdb.org/t/p/original/jPhak722pNGxQIXSEfeWIUqBrO5.jpg'}, {'id': 22, 'title': 'Piratas del Caribe: La maldición de la Perla Negra', 'poster_url': 'https://image.tmdb.org/t/p/original/8zHnkTGyAImBcI49a1xFJHUjbaK.jpg'}]
+    assert response.data == [{'id': 12, 'title': 'Buscando a Nemo', 'poster_url': 'https://image.tmdb.org/t/p/original/jPhak722pNGxQIXSEfeWIUqBrO5.jpg', 'vote_average': 7.819, 'vote_count': 19117}, {'id': 22, 'title': 'Piratas del Caribe: La maldición de la Perla Negra', 'poster_url': 'https://image.tmdb.org/t/p/original/8zHnkTGyAImBcI49a1xFJHUjbaK.jpg', 'vote_average': 7.806, 'vote_count': 20459}]
+    asserts_passed +=1
+except AssertionError:
+    asserts_failed +=1
+
+# Usuario valido sin lista de favoritos
+try:
+    response = supabase.rpc("get_favorites", {'user_id': '1f874ad7-1203-4d6b-bade-73b76582b7e7'}).execute()
+    assert response.data == []
     asserts_passed +=1
 except AssertionError:
     asserts_failed +=1
