@@ -48,46 +48,72 @@
 </template>
   
 <script setup lang="ts">
-const client = useSupabaseAuthClient()
 import { ref, onMounted } from 'vue';
+const client = useSupabaseAuthClient();
 
 useHead({
-title: 'User profile',
-meta: [
+  title: 'User profile',
+  meta: [
     { name: 'description', content: 'Profile view.' }
-]
-})
+  ]
+});
 
 definePageMeta({
-layout: "home"
-  })
+  layout: "home"
+});
 
+// Reactive lists for favorites and wishlist
 const fav_list = ref([]);
-
-const fetchFavList = async () => {
-
-    const { data, error } = await client.rpc('get_favorites',{user_id: 2});
-
-    if (error) {
-      console.error('Error al obtener películas:', error);
-    } else {
-      fav_list.value = data;
-    }
-};
-
 const wish_list = ref([]);
 
-const fetchWishList = async () => {
+// Reactive user ID
+const user_id = ref(null);
 
-  const { data, error } = await client.rpc('get_wishlist',{user_id: 4});
+const fetchUserId = async () => {
+  const { data: sessionData, error: sessionError } = await client.auth.getSession();
 
+  if (sessionError || !sessionData.session) {
+    console.error('User is not authenticated:', sessionError);
+    return;
+  }
+
+  const { data: user, error: userError } = await client.auth.getUser();
+
+  if (userError) {
+    console.error('Error fetching user:', userError);
+  } else {
+    user_id.value = user.user.id || null;
+  }
+};
+
+
+const fetchFavList = async () => {
+  if (!user_id.value) return;
+
+  const { data, error } = await client.rpc('get_favorites', { user_id: user_id.value });
   if (error) {
-    console.error('Error al obtener películas:', error);
+    console.error('Error fetching favorites:', error);
+  } else {
+    fav_list.value = data;
+  }
+};
+
+const fetchWishList = async () => {
+  if (!user_id.value) return;
+
+  const { data, error } = await client.rpc('get_wishlist', { user_id: user_id.value });
+  if (error) {
+    console.error('Error fetching wishlist:', error);
   } else {
     wish_list.value = data;
   }
 };
 
-onMounted(fetchFavList);
-onMounted(fetchWishList);  
+onMounted(async () => {
+  await fetchUserId();
+  if (user_id.value) {
+    await fetchFavList();
+    await fetchWishList();
+  }
+});
 </script>
