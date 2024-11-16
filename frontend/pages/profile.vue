@@ -4,14 +4,14 @@
       <Profile />
 
       <h2 class="text-2xl font-display">Favoritas</h2>
-      <template v-if="newest_movies.length > 0">
+      <template v-if="fav_list.length > 0">
         <UCarousel 
           class="px-10"
           v-slot="{ item, index }"
-          :items="newest_movies"
+          :items="fav_list"
           :ui="{
-            wrapper: 'w-full',
-            container: 'gap-5',
+            wrapper: 'w-full flex justify-center',
+            container: 'flex justify-center gap-5',
             item: 'h-[350px] w-[150px]',
           }"
           arrows
@@ -24,11 +24,11 @@
       </template>
 
       <h2 class="text-2xl font-display">Wishlist</h2>
-      <template v-if="popular_movies.length > 0">
+      <template v-if="wish_list.length > 0">
         <UCarousel 
           class="px-10"
           v-slot="{ item, index }"
-          :items="popular_movies"
+          :items="wish_list"
           :ui="{
             wrapper: 'w-full flex justify-center',
             container: 'flex justify-center gap-5',
@@ -62,33 +62,32 @@ definePageMeta({
 layout: "home"
   })
 
-const newest_movies = ref([]);
+const fav_list = ref([]);
 
-const fetchNewestMovies = async () => {
+const fetchFavList = async () => {
 
-    const { data, error } = await client.rpc('get_newest_movies',{length_movies: 0});
+    const { data, error } = await client.rpc('get_favorites',{user_id: 2});
 
     if (error) {
-        console.error('Error al obtener películas:', error);
+      console.error('Error al obtener películas:', error);
     } else {
-        newest_movies.value = data;
+      fav_list.value = data;
     }
 };
 
-const popular_movies = ref([]);
+const wish_list = ref([]);
 
-const fetchPopularMovies = async () => {
+const fetchWishList = async () => {
 
-  const { data, error } = await client.rpc('get_popular_movies',{length_movies: 4});
+  const { data, error } = await client.rpc('get_wishlist',{user_id: 4});
 
   if (error) {
     console.error('Error al obtener películas:', error);
   } else {
-    popular_movies.value = data;
+    wish_list.value = data;
   }
 };
 
-onMounted(fetchNewestMovies);
-onMounted(fetchPopularMovies);
-  
+onMounted(fetchFavList);
+onMounted(fetchWishList);  
 </script>
