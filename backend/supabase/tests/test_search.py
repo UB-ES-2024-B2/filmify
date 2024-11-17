@@ -46,3 +46,7 @@ def test_unique_advanced_search(db_connection, setup_test_data):
 def test_multiple_advanced_search(db_connection, setup_test_data):
     response = db_connection.rpc('advanced_search_test', {'query': "Piratas"}).execute()
     assert len(response.data) == 2
+
+def test_no_existing_advanced_search(db_connection, setup_test_data):
+    response = db_connection.rpc('advanced_search_test', {'query': "Testing"}).execute()
+    assert len(response.data) == 0
