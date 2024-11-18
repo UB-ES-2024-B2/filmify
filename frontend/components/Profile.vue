@@ -11,8 +11,8 @@
   
       <!-- Profile Info -->
       <div class="flex-grow text-center md:text-left">
-        <h2 class="text-2xl font-bold">{{ username }}</h2>
-        <p>{{ email }}</p>
+        <h2 class="text-2xl font-bold">{{ userData.username }}</h2>
+        <p>{{ userData.email }}</p>
         <p class="text-xs text-gray-500">{{ bio }}</p>
       </div>
   
@@ -28,9 +28,10 @@
   
     
     <script setup>
+    const props = defineProps({
+      userData: Object
+    });
     const profileImage = 'https://avatars.githubusercontent.com/u/113581734?v=4';
-    const username = 'John Doe';
-    const email = 'johndoe@example.com';
     const bio = '"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." ';
     const averageRating = 4.5;
     </script>
