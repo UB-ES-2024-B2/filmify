@@ -14,7 +14,7 @@ begin
     select *, 2 as order_, 2.0 as similarity
     from "Peliculas"
     where to_tsvector(title)
-      @@ to_tsquery((regexp_replace(normalize_text(query), ' ', '+', 'g') || ':*'))
+      @@ to_tsquery('simple', (regexp_replace(normalize_text(query), ' ', '+', 'g') || ':*'))
       
   union
     select *, 3 as order_, similarity(title, query) as similarity
