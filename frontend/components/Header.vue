@@ -10,19 +10,20 @@
       </NuxtLink>
 
       <!-- Componente de búsqueda -->
-      <SearchDropdown />
-
-      <!-- Componente de filtrado -->
-      <FilterDropdown />
+      <div class="flex-1 mx-4">
+        <SearchDropdown />
+      </div>
 
       <div class="flex items-center gap-2">
-        <UButton v-if="!user" :size="'md'" to="/login" color="purple" class="inline">Login</UButton>
-        <UButton v-if="!user" :size="'md'" to="/register" color="gray" class="inline">Sign Up</UButton>
+        <FilterDropdown class="hidden sm:inline"/>
+        <UButton v-if="!user" :size="'md'" to="/login" color="purple">Login</UButton>
+        <UButton v-if="!user" :size="'md'" to="/register" color="gray" class="hidden sm:inline">Sign Up</UButton>
         <ProfileNav v-if="user" />
       </div>
     </div>
   </nav>
 </template>
+
 
 <script setup lang="ts">
 import FilterDropdown from './components/FilterDropdown.vue';
