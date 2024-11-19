@@ -48,6 +48,7 @@
 </template>
   
 <script setup lang="ts">
+
 import { ref, onMounted } from 'vue';
 const client = useSupabaseAuthClient();
 const user = useSupabaseUser()
@@ -81,6 +82,7 @@ const fetchUserId = async () => {
 
   const { data: user, error: userError } = await client.auth.getUser();
 
+
   if (userError) {
     console.error('Error fetching user:', userError);
   } else {
@@ -92,6 +94,7 @@ const fetchUserId = async () => {
 const fetchFavList = async () => {
   if (!user_id.value) return;
 
+
   const { data, error } = await client.rpc('get_favorites', { user_id: user_id.value });
   if (error) {
     console.error('Error fetching favorites:', error);
@@ -99,6 +102,7 @@ const fetchFavList = async () => {
     fav_list.value = data;
   }
 };
+
 
 const fetchWishList = async () => {
   if (!user_id.value) return;
