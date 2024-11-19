@@ -50,6 +50,8 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 const client = useSupabaseAuthClient();
+const user = useSupabaseUser()
+const userData = user.value?.user_metadata
 
 useHead({
   title: 'User profile',
