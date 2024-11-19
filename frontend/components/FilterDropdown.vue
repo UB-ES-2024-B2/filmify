@@ -57,7 +57,6 @@ onMounted(() => {
       class="flex items-center gap-2 px-4 py-2 focus:outline-none hover:bg-purple-700"
       @click="toggleDropdown"
     >
-      <span class="font-medium">Filtros</span>
     </UButton>
 
     <!-- Dropdown -->

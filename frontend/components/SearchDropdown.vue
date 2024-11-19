@@ -34,7 +34,7 @@
           v-for="movie in dropdownResults"
           :key="movie.id"
           class="p-2 hover:bg-gray-100 cursor-pointer"
-          @click="goToMovieDetail(movie.id)"
+          @click="goToMovieDetail(movie)"
         >
           <div class="flex items-center">
             <img
@@ -98,9 +98,12 @@ const handleSearch = () => {
 };
 
 // Función para redirigir al detalle de la película
-const goToMovieDetail = (id) => {
+const goToMovieDetail = (movie) => {
   showDropdown.value = false;
-  router.push(`/movies/${id}`);
+  navigateTo({
+    path: `/movies/${movie.title.replace(/\s+/g, '-').toLowerCase()}`,
+    query: { id: movie.id },
+  });
 };
 
 // Función para cerrar el dropdown al hacer clic fuera
