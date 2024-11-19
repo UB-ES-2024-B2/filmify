@@ -1,7 +1,7 @@
 import dotenv from 'dotenv'
 
 // Load environment variables from a specific path
-dotenv.config({ path: '../.env' })
+dotenv.config({ path: '../frontend/.env' })
 
 export default defineNuxtConfig({
   modules: ['@nuxtjs/supabase', '@nuxt/ui', '@nuxtjs/tailwindcss', "nuxt-rating", "@nuxt/image"],

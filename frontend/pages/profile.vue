@@ -1,17 +1,17 @@
 <template>
   <main class="px-10 overflow-y-auto dark:bg-slate-800 page xl:px-12">
     <section class="container mx-auto flex flex-col gap-5 items-center justify-center mt-6 scroll-mt-[120px] min-h-screen">
-      <Profile />
+      <Profile :userData="userData"/>
 
       <h2 class="text-2xl font-display">Favoritas</h2>
-      <template v-if="newest_movies.length > 0">
+      <template v-if="fav_list.length > 0">
         <UCarousel 
           class="px-10"
           v-slot="{ item, index }"
-          :items="newest_movies"
+          :items="fav_list"
           :ui="{
-            wrapper: 'w-full',
-            container: 'gap-5',
+            wrapper: 'w-full flex justify-center',
+            container: 'flex justify-center gap-5',
             item: 'h-[350px] w-[150px]',
           }"
           arrows
@@ -24,11 +24,11 @@
       </template>
 
       <h2 class="text-2xl font-display">Wishlist</h2>
-      <template v-if="popular_movies.length > 0">
+      <template v-if="wish_list.length > 0">
         <UCarousel 
           class="px-10"
           v-slot="{ item, index }"
-          :items="popular_movies"
+          :items="wish_list"
           :ui="{
             wrapper: 'w-full flex justify-center',
             container: 'flex justify-center gap-5',
@@ -48,47 +48,78 @@
 </template>
   
 <script setup lang="ts">
-const client = useSupabaseAuthClient()
+
 import { ref, onMounted } from 'vue';
+const client = useSupabaseAuthClient();
+const user = useSupabaseUser()
+const userData = user.value?.user_metadata
 
 useHead({
-title: 'User profile',
-meta: [
+  title: 'User profile',
+  meta: [
     { name: 'description', content: 'Profile view.' }
-]
-})
+  ]
+});
 
 definePageMeta({
-layout: "home"
-  })
+  layout: "home"
+});
 
-const newest_movies = ref([]);
+// Reactive lists for favorites and wishlist
+const fav_list = ref([]);
+const wish_list = ref([]);
 
-const fetchNewestMovies = async () => {
+// Reactive user ID
+const user_id = ref(null);
 
-    const { data, error } = await client.rpc('get_newest_movies',{length_movies: 0});
+const fetchUserId = async () => {
+  const { data: sessionData, error: sessionError } = await client.auth.getSession();
 
-    if (error) {
-        console.error('Error al obtener películas:', error);
-    } else {
-        newest_movies.value = data;
-    }
-};
+  if (sessionError || !sessionData.session) {
+    console.error('User is not authenticated:', sessionError);
+    return;
+  }
 
-const popular_movies = ref([]);
+  const { data: user, error: userError } = await client.auth.getUser();
 
-const fetchPopularMovies = async () => {
 
-  const { data, error } = await client.rpc('get_popular_movies',{length_movies: 4});
-
-  if (error) {
-    console.error('Error al obtener películas:', error);
+  if (userError) {
+    console.error('Error fetching user:', userError);
   } else {
-    popular_movies.value = data;
+    user_id.value = user.user.id || null;
   }
 };
 
-onMounted(fetchNewestMovies);
-onMounted(fetchPopularMovies);
-  
+
+const fetchFavList = async () => {
+  if (!user_id.value) return;
+
+
+  const { data, error } = await client.rpc('get_favorites', { user_id: user_id.value });
+  if (error) {
+    console.error('Error fetching favorites:', error);
+  } else {
+    fav_list.value = data;
+  }
+};
+
+
+const fetchWishList = async () => {
+  if (!user_id.value) return;
+
+  const { data, error } = await client.rpc('get_wishlist', { user_id: user_id.value });
+  if (error) {
+    console.error('Error fetching wishlist:', error);
+  } else {
+    wish_list.value = data;
+  }
+};
+
+onMounted(async () => {
+  await fetchUserId();
+  if (user_id.value) {
+    await fetchFavList();
+    await fetchWishList();
+  }
+});
 </script>
