@@ -5,7 +5,10 @@ const props = defineProps({
 });
 
 const goToDetails = () => {
-  navigateTo(`/movies/${props.item.id}`);
+  navigateTo({
+    path: `/movies/${props.item.title.replace(/\s+/g, '-').toLowerCase()}`,
+    query: { id: props.item.id },
+  });
 };
 </script>
 

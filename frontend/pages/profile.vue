@@ -1,7 +1,7 @@
 <template>
   <main class="px-10 overflow-y-auto dark:bg-slate-800 page xl:px-12">
     <section class="container mx-auto flex flex-col gap-5 items-center justify-center mt-6 scroll-mt-[120px] min-h-screen">
-      <Profile />
+      <Profile :userData="userData"/>
 
       <h2 class="text-2xl font-display">Favoritas</h2>
       <template v-if="fav_list.length > 0">
@@ -48,6 +48,7 @@
 </template>
   
 <script setup lang="ts">
+
 import { ref, onMounted } from 'vue';
 const client = useSupabaseAuthClient();
 
