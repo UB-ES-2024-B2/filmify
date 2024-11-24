@@ -7,7 +7,7 @@
     <p class="text-gray-600 mb-4">{{ post.content }}</p>
 
     <!-- Autor del post -->
-    <p class="text-sm text-gray-500 mb-4">Posted by: <span class="font-semibold">{{ post.user }}</span></p>
+    <p class="text-sm text-gray-500 mb-4">Posted by: <span class="font-semibold">{{ post.username }}</span></p>
 
     <!-- Botones de upvote y downvote -->
     <div class="flex items-center justify-center">
@@ -49,7 +49,7 @@ const props = defineProps({
 });
 
 // Estados para rastrear la votacion
-const voteCount = ref(props.post.voteCount || 0);  // La base de votos de cada post
+const voteCount = ref(props.post.votes || 0);  // La base de votos de cada post
 const hasVoted = ref<string | null>(null);  // Flag para rastrear si el usuario ha votado, 'upvote' or 'downvote'
 
 // Methods to handle upvote and downvote actions
