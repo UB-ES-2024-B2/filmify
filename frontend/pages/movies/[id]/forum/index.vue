@@ -18,7 +18,7 @@
                 v-if="user" 
                 class="mx-auto px-8"
                 color="purple"
-                size="xl"s
+                size="xl"
                 @click="openModal"
               >
                 Post
@@ -212,7 +212,13 @@ const fetchUserId = async () => {
   }
 };
 
-onMounted(fetchUserId);
+const set_UserId  = () => {
+  if (user) {
+    fetchUserId();
+  }
+};
+
+onMounted(set_UserId);
 
 
 </script>
