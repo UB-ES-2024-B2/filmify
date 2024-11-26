@@ -1,38 +1,46 @@
 <template>
   <main>
     <section>
-      <div v-if="!movieTitle" class="text-center">
+      <div v-if="!movieTitle || forum_exist === null" class="text-center">
         <p class="text-gray-500 text-lg">Loading forum...</p>
       </div>
 
       <div v-else>
-        <!-- Forum Title -->
-        <div class="flex justify-between items-center mb-6">
-          <div>
-            <h1 class="text-4xl font-bold">{{ movieTitle }}</h1>
+        <div v-if="forum_exist">
+          <!-- Forum Title -->
+          <div class="flex justify-between items-center mb-6">
+            <div>
+                <h1 class="text-4xl font-bold">{{ forum[0]?.name }}</h1>
+                <h3 class="">{{ forum[0]?.description }}</h3>
+            </div>
+            <div>
+              <UButton 
+                v-if="user" 
+                class="mx-auto px-8"
+                color="purple"
+                size="xl"
+                @click="openModal"
+              >
+                Post
+              </UButton>
+            </div>
           </div>
-          <div>
-            <UButton 
-              v-if="user" 
-              class="mx-auto px-8"
-              color="purple"
-              size="xl"
-              @click="openModal"
-            >
-              Post
-            </UButton>
+
+          <!-- Posts Container -->
+          <div class="container mx-auto mt-6">
+            <div class="space-y-6">
+              <!-- Loop through posts -->
+              <PostCard @change-vote="changeVote"
+                v-for="(post, index) in posts"
+                :key="index"
+                :post="post"
+              />
+            </div>
           </div>
         </div>
-
-        <!-- Posts Container -->
-        <div class="container mx-auto mt-6">
-          <div class="space-y-6">
-            <!-- Loop through posts -->
-            <PostCard
-              v-for="(post, index) in posts"
-              :key="index"
-              :post="post"
-            />
+        <div v-else>
+          <div class="flex justify-between items-center mb-6">
+            <h1 class="text-4xl font-bold"> El Foro de la película {{ movieTitle }} aun no está disponible.</h1>
           </div>
         </div>
       </div>
@@ -82,35 +90,7 @@
 <script setup>
 import { useRoute } from 'vue-router';
 import { useSupabaseUser } from '#imports';
-
-// Dummy posts data (Now reactive)
-const posts = ref([
-  {
-    title: 'Post Title 1',
-    content: 'This is a short description of the post content. Lorem ipsum dolor sit amet.',
-    user: 'User 1',
-  },
-  {
-    title: 'Post Title 2',
-    content: 'Another post description goes here. Quisque vitae mauris nec augue volutpat viverra.',
-    user: 'User 2',
-  },
-  {
-    title: 'Post Title 3',
-    content: 'Yet another example of a post card. Proin tincidunt lacus in lacus aliquet pretium.',
-    user: 'User 3',
-  },
-  {
-    title: 'Post Title 4',
-    content: 'Curabitur sed diam eget risus varius blandit sit amet non magna.',
-    user: 'User 4',
-  },
-  {
-    title: 'Post Title 5',
-    content: 'Phasellus eget nisi sit amet erat pharetra pretium eget id felis.',
-    user: 'User 5',
-  },
-]);
+import { ref, onMounted } from 'vue';
 
 useHead({
   title: 'Forum',
@@ -122,6 +102,7 @@ definePageMeta({
 });
 
 const route = useRoute();
+const client = useSupabaseAuthClient();
 const user = useSupabaseUser();
 const movieId = route.query.id; // Access movie ID from query params
 const movieTitle = route.params.id; // Access movie title from route params
@@ -147,17 +128,133 @@ const closeModal = () => {
 // Handle post submission
 const submitPost = () => {
   if (newPost.value.title && newPost.value.content) {
-    posts.value.push({
-      title: newPost.value.title,
-      content: newPost.value.content,
-      user: user?.user_metadata?.username, // Add user or anonymous
-    });
-
+    fetchCreatePost();
     closeModal(); // Cierra tras publicar
   } else {
     alert('Escribe título y comentario.');
   }
 };
+
+const changeVote = (post, vote_type) => {
+  if (post.vote === null){
+    fetchVotePost(post, vote_type)
+  }else{
+    fetchUpdateVotePost(post, vote_type)
+  }
+};
+
+const fetchVotePost = async (post, vote_type) => {
+  const { error } = await client.rpc('vote_post',{input_user_id: u_id.value, input_post_id: post.post_id, vote: vote_type});
+
+  if (error) {
+    console.error('Error al crear el post:', error);
+  } 
+  else {
+    fetchPostsForum();
+  }
+};
+
+const fetchUpdateVotePost = async (post, vote_type) => {
+  const { error } = await client.rpc('update_vote_post',{input_user_id: u_id.value, input_post_id: post.post_id, vote: vote_type});
+
+  if (error) {
+    console.error('Error al crear el post:', error);
+  } 
+  else {
+    fetchPostsForum();
+  }
+};
+
+const fetchCreatePost = async () => {
+  const { error } = await client.rpc('create_post',{title: newPost.value.title, content: newPost.value.content, input_movie_id: parseInt(movieId, 10), user_id: u_id.value});
+
+  if (error) {
+    console.error('Error al crear el post:', error);
+  } 
+  else {
+    fetchPostsForum();
+  }
+};
+
+
+const forum = ref([]);
+const forum_exist = ref(null)
+
+
+const fetchExistsForum = async () => {
+  const { data, error } = await client.rpc('exists_forum',{input_movie_id: parseInt(movieId, 10)});
+
+  if (error) {
+    console.error('Error al comprobar si el foro existe:', error);
+  } else {
+    forum_exist.value = data;
+    if (data){
+      fetchForum();
+      fetchPostsForum();
+    }
+  }
+};
+
+
+const fetchForum = async () => {
+  const { data, error } = await client.rpc('get_forum_info',{input_movie_id: parseInt(movieId, 10)});
+
+  if (error) {
+    console.error('Error al obtener la info de forum:', error);
+  } else {
+    forum.value = data;
+  }
+};
+
+onMounted(fetchExistsForum);
+
+// Dummy posts data (Now reactive)
+const posts = ref([]);
+
+
+// Reactive user ID
+const u_id = ref(null);
+
+const fetchPostsForum = async () => {
+  
+  const { data, error } = await client.rpc('get_posts',{input_movie_id: parseInt(movieId, 10), input_user_id: u_id.value});
+
+  if (error) {
+    console.error('Error al obtener posts:', error);
+  } else {
+    posts.value = data;
+  }
+};
+
+
+const fetchUserId = async () => {
+  const { data: sessionData, error: sessionError } = await client.auth.getSession();
+
+  if (sessionError || !sessionData.session) {
+    console.error('User is not authenticated:', sessionError);
+    return;
+  }
+
+  const { data: user, error: userError } = await client.auth.getUser();
+
+
+  if (userError) {
+    console.error('Error fetching user:', userError);
+  } else {
+    u_id.value = user.user.id || null;
+    fetchPostsForum();
+  }
+};
+
+const set_UserId  = () => {
+  if (user) {
+    fetchUserId();
+  }
+};
+
+onMounted(set_UserId);
+
+
 </script>
   
   
