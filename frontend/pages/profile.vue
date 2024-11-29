@@ -184,6 +184,7 @@ const closeModal = () => {
   isModalOpen.value = false;
 };
 const file = ref(null)
+
 const onFileChange = (event: Event) => {
   const input = event.target as HTMLInputElement;
   if (input.files && input.files[0]) {
@@ -198,6 +199,8 @@ const onFileChange = (event: Event) => {
   }
 }
 
+
+const maxSize = 5 * 1024 * 1024; // 5 MB
 async function uploadImage() {
   try {
     const upload_file = file.value
@@ -205,10 +208,13 @@ async function uploadImage() {
     if (upload_file == null) {
       throw new Error('No has seleccionado la imagen.')
     }
+    if (upload_file.size > maxSize){
+      throw new Error('La imagen supera el límite de 5MB.')
+    }
     if (!upload_file.type.startsWith('image/')) {
       throw new Error('Solo se permiten archivos de imagen.');
     }
-    
+
     const fileName = upload_file.name;
     const fileExtension = fileName.substring(fileName.lastIndexOf('.') + 1);
 
