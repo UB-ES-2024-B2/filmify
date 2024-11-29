@@ -242,7 +242,7 @@ const fetchAddPFP = async (url) => {
     console.error('Error fetching wishlist:', error);
   } else {
     if (data) {
-      fetchUserInfo();
+      window.location.reload();
     }
   }
 };
