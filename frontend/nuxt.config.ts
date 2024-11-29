@@ -5,7 +5,7 @@ dotenv.config({ path: '../frontend/.env' })
 
 export default defineNuxtConfig({
   modules: ['@nuxtjs/supabase', '@nuxt/ui', '@nuxtjs/tailwindcss', "nuxt-rating", "@nuxt/image"],
-
+  plugins: ['~/plugins/firebase'],
   tailwindcss: {
     cssPath: '~/assets/css/tailwind.postcss'
   },
