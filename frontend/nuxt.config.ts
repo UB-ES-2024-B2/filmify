@@ -1,8 +1,3 @@
-import dotenv from 'dotenv'
-
-// Load environment variables from a specific path
-dotenv.config({ path: '../frontend/.env' })
-
 export default defineNuxtConfig({
   modules: ['@nuxtjs/supabase', '@nuxt/ui', '@nuxtjs/tailwindcss', "nuxt-rating", "@nuxt/image"],
 
@@ -23,5 +18,19 @@ export default defineNuxtConfig({
         { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono&display=swap' },
       ]
     }
+  },
+
+  runtimeConfig: {
+    private: {
+      
+    },
+    public: {
+      SUPABASE_URL: process.env.DATABASE_URL,  // Tomará el valor de la variable de entorno
+      SUPABASE_KEY: process.env.API_KEY,  // Tomará el valor de la variable de entorno
+    }
   }
 })
+
+// Aquí también puedes poner los console.log para verificar
+console.log('Supabase URL:', process.env.DATABASE_URL);
+console.log('Supabase Key:', process.env.API_KEY);
