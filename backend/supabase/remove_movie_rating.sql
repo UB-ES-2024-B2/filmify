@@ -6,10 +6,11 @@ begin
   elsif not exists ( select 1 from public."Usuarios Auth" where public."Usuarios Auth".id = user_id) THEN 
     return query values (false, 'User does not exist.');
   elsif not exists ( select 1 from "Valoraciones" where user_fk = user_id and movie_fk = movie_id) THEN 
-    return query values (false, 'This user has not rated this movie before.');
+    return query values (false, 'This user has not rated this movie.');
   else
     DELETE FROM "Valoraciones"
     WHERE user_fk = user_id and movie_fk = movie_id;
+    return query values (true, 'Rating removed successfully.');
   end if;
 end
 $$ language plpgsql;
