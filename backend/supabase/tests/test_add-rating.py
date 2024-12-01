@@ -19,13 +19,17 @@ def db_connection():
 user_id = 'c7228a59-c9ae-4eae-9dd0-47f61e87ecb6'
 movie_id = 671
 
+@pytest.fixture(scope='module', autouse=True)
+def setup(db_connection):
+    db_connection.rpc('removemovierating', {'user_id': user_id, 'movie_id': movie_id}).execute()
+
 def test_addNewRating(db_connection):
     response = db_connection.rpc('ratemovie', {'user_id': user_id, 'movie_id': movie_id, 'new_rating': 5}).execute()
-    assert response.data == [{'success': True, 'message': 'Rated successfully.'}]
+    assert response.data == [{'success': True, 'message': 'Rating added successfully.'}]
 
 def test_updateRating(db_connection):
     response = db_connection.rpc('ratemovie', {'user_id': user_id, 'movie_id': movie_id, 'new_rating': 4}).execute()
-    assert response.data == [{'success': True, 'message': 'Rated successfully.'}]
+    assert response.data == [{'success': True, 'message': 'Rating updated successfully.'}]
 
 def test_incorrectMovieID(db_connection):
     response = db_connection.rpc('ratemovie', {'user_id': user_id, 'movie_id': 1, 'new_rating': 5}).execute()
