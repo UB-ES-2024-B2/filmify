@@ -22,9 +22,11 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+        working-directory: ./frontend
 
       - name: Start the application
         run: npm run dev
+        working-directory: ./frontend
         env:
           PORT: 3000
 
@@ -35,3 +37,4 @@ jobs:
         env:
           CYPRESS_BASE_URL: http://localhost:3000
         run: npx cypress run
+        working-directory: ./frontend
