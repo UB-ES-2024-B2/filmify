@@ -26,4 +26,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run Pytest
-        run: pytest tests/ --disable-warnings
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: pytest --disable-warnings
