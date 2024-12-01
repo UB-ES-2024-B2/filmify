@@ -5,7 +5,7 @@
     >
       <div v-if="!movie" class="text-center">
         <p class="text-gray-500 text-lg">Loading movie details...</p>
-      </div>
+      </div> 
 
       <div v-else>
         <div class="text-center">
@@ -31,6 +31,25 @@
             />
             <p class="text-gray-500 text-lg md:text-xl">{{ movie.overview }}</p>
           </div>
+        </div>
+
+        <!-- Botón de favoritos -->
+        <div class="mt-4 flex justify-center gap-4">
+          <button
+            @click="toggleFavorite"
+            :class="isFavorited ? 'bg-red-500' : 'bg-green-500'"
+            class="text-white font-bold py-2 px-4 rounded"
+          >
+            {{ isFavorited ? 'Eliminar de favoritos' : 'Añadir a favoritos' }}
+          </button>
+
+          <button
+            @click="toggleWish"
+            :class="isWished ? 'bg-blue-500' : 'bg-yellow-500'"
+            class="text-white font-bold py-2 px-4 rounded"
+          >
+            {{ isWished ? 'Eliminar de wishlist' : 'Añadir a wishlist' }}
+          </button>
         </div>
 
         <div class="mt-8 bg-gray-200 p-4 rounded-lg w-full">
@@ -69,14 +88,13 @@
   </main>
 </template>
 
-
-  
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 
 const route = useRoute();
 const client = useSupabaseClient();
+const clientauth = useSupabaseAuthClient();
 const movieID = route.query.id;
 
 const movie = ref(null); // Start with null to indicate loading
@@ -84,7 +102,11 @@ const genres = ref(null);
 const cast = ref(null);
 const director = ref(null);
 const language = ref(null);
+const isFavorited = ref(false); // Estado inicial
+const isWished = ref(false); // Estado inicial
+const userID = ref(null);
 
+// Fetch movie details
 const fetchMovieDetails = async () => {
   try {
     const { data, error } = await client.rpc('get_movie_details', { movie_id: movieID });
@@ -101,12 +123,13 @@ const fetchMovieDetails = async () => {
   }
 };
 
+// Fetch other movie-related data
 const fetchGenres = async () => {
   try {
-    const { data, error } = await client.rpc('get_movie_genres', { movie_id: movieID })
+    const { data, error } = await client.rpc('get_movie_genres', { movie_id: movieID });
 
     if (error) {
-      console.error('Error fetching movie details:', error);
+      console.error('Error fetching movie genres:', error);
     } else if (data && data.length > 0) {
       genres.value = data.map((genre) => genre.genre_name);
     } else {
@@ -119,10 +142,10 @@ const fetchGenres = async () => {
 
 const fetchCast = async () => {
   try {
-    const { data, error } = await client.rpc('get_movie_cast', { movie_id: movieID })
+    const { data, error } = await client.rpc('get_movie_cast', { movie_id: movieID });
 
     if (error) {
-      console.error('Error fetching movie details:', error);
+      console.error('Error fetching movie cast:', error);
     } else if (data && data.length > 0) {
       cast.value = data.map((actor) => actor.actor_name);
     } else {
@@ -135,12 +158,12 @@ const fetchCast = async () => {
 
 const fetchDirector = async () => {
   try {
-    const { data, error } = await client.rpc('get_movie_director', { movie_id: movieID })
+    const { data, error } = await client.rpc('get_movie_director', { movie_id: movieID });
 
     if (error) {
-      console.error('Error fetching movie details:', error);
+      console.error('Error fetching movie director:', error);
     } else if (data && data.length > 0) {
-      director.value = data
+      director.value = data;
     } else {
       console.warn('No data returned for the given movie ID');
     }
@@ -151,12 +174,12 @@ const fetchDirector = async () => {
 
 const fetchLanguage = async () => {
   try {
-    const { data, error } = await client.rpc('get_movie_language', { movie_id: movieID })
+    const { data, error } = await client.rpc('get_movie_language', { movie_id: movieID });
 
     if (error) {
-      console.error('Error fetching movie details:', error);
+      console.error('Error fetching movie language:', error);
     } else if (data && data.length > 0) {
-      language.value = data
+      language.value = data;
     } else {
       console.warn('No data returned for the given movie ID');
     }
@@ -165,9 +188,160 @@ const fetchLanguage = async () => {
   }
 };
 
-onMounted(fetchMovieDetails);
-onMounted(fetchGenres);
-onMounted(fetchCast);
-onMounted(fetchDirector)
-onMounted(fetchLanguage)
+
+// Reactive user ID
+
+
+const fetchUserId = async () => {
+  const { data: sessionData, error: sessionError } = await clientauth.auth.getSession();
+
+  if (sessionError || !sessionData.session) {
+    console.error('User is not authenticated:', sessionError);
+    return;
+  }
+
+  const { data: user, error: userError } = await clientauth.auth.getUser();
+
+
+  if (userError) {
+    console.error('Error fetching user:', userError);
+  } else {
+    userID.value = user.user.id || null;
+  }
+};
+
+const checkIfFavorited = async () => {
+  try {
+    const { data, error } = await client.rpc('is_favorited', {
+      user_id: userID.value,
+      movie_id: movieID,
+    });
+
+    if (error) {
+      console.error('Error verificando si es favorita:', error);
+      return false;
+    }
+    isFavorited.value = data
+    return data; // Devuelve true si es favorita, false si no
+  } catch (err) {
+    console.error('Error al comprobar si es favorita:', err);
+    return false;
+  }
+};
+
+
+// Toggle favorite status
+const toggleFavorite = async () => {
+  try {
+    if (!movie.value) return; // Asegúrate de que haya una película cargada antes de continuar
+
+    if (isFavorited.value) {
+      // Lógica para eliminar de favoritos
+      const { data, error } = await client.rpc('remove_from_favorites', {
+        user_id: userID.value, // userID debe estar definido
+        movie_id: movieID, // movieID es la ID de la película actual
+      });
+
+      if (error) {
+        console.error('Error eliminando de favoritos:', error);
+      } else if (data) {
+        isFavorited.value = false;
+        console.log(`${movie.value.title} eliminado de favoritos.`);
+      } else {
+        console.warn('No se pudo eliminar de favoritos. Verifica las restricciones.');
+      }
+    } else {
+      // Lógica para añadir a favoritos
+      const { data, error } = await client.rpc('add_to_favorites', {
+        user_id: userID.value, // userID debe estar definido
+        movie_id: movieID, // movieID es la ID de la película actual
+      });
+
+      if (error) {
+        console.error('Error añadiendo a favoritos:', error);
+      } else if (data) {
+        isFavorited.value = true;
+        console.log(`${movie.value.title} añadido a favoritos.`);
+      } else {
+        console.warn('No se pudo añadir a favoritos. Verifica las restricciones.');
+      }
+    }
+  } catch (err) {
+    console.error('Error al alternar estado de favorito:', err);
+  }
+};
+
+
+const checkIfWished = async () => {
+  try {
+    const { data, error } = await client.rpc('is_wished', {
+      user_id: userID.value,
+      movie_id: movieID,
+    });
+
+    if (error) {
+      console.error('Error verificando si esta en la wishlist:', error);
+      return false;
+    }
+    isWished.value = data
+    return data; // Devuelve true si es favorita, false si no
+  } catch (err) {
+    console.error('Error al comprobar si esta en la wishlist:', err);
+    return false;
+  }
+};
+
+
+// Toggle wishlist status
+const toggleWish = async () => {
+  try {
+    if (!movie.value) return; // Asegúrate de que haya una película cargada antes de continuar
+
+    if (isWished.value) {
+      // Lógica para eliminar de favoritos
+      const { data, error } = await client.rpc('remove_from_wishlist', {
+        user_id: userID.value, // userID debe estar definido
+        movie_id: movieID, // movieID es la ID de la película actual
+      });
+
+      if (error) {
+        console.error('Error eliminando de wishlist:', error);
+      } else if (data) {
+        isWished.value = false;
+        console.log(`${movie.value.title} eliminado de wishlist.`);
+      } else {
+        console.warn('No se pudo eliminar de wishlist. Verifica las restricciones.');
+      }
+    } else {
+      // Lógica para añadir a favoritos
+      const { data, error } = await client.rpc('add_to_wishlist', {
+        user_id: userID.value, // userID debe estar definido
+        movie_id: movieID, // movieID es la ID de la película actual
+      });
+
+      if (error) {
+        console.error('Error añadiendo a wishlist:', error);
+      } else if (data) {
+        isWished.value = true;
+        console.log(`${movie.value.title} añadido a wishlist.`);
+      } else {
+        console.warn('No se pudo añadir a wishlist. Verifica las restricciones.');
+      }
+    }
+  } catch (err) {
+    console.error('Error al alternar estado de wishlist:', err);
+  }
+};
+
+onMounted(async () => {
+  await fetchMovieDetails();
+  await fetchGenres();
+  await fetchCast();
+  await fetchDirector();
+  await fetchLanguage();
+  await fetchUserId(); // Esperar que fetchUserId termine antes de llamar a checkIfFavorited
+  await checkIfFavorited(); // Llamar a checkIfFavorited después de que userID esté disponible
+  await checkIfWished();
+});
+
 </script>
