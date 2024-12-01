@@ -34,7 +34,9 @@
         </div>
 
         <!-- Botón de favoritos -->
+
         <div class="mt-4 flex justify-center gap-4">
+
           <button
             @click="toggleFavorite"
             :class="isFavorited ? 'bg-red-500' : 'bg-green-500'"
@@ -42,7 +44,6 @@
           >
             {{ isFavorited ? 'Eliminar de favoritos' : 'Añadir a favoritos' }}
           </button>
-
           <button
             @click="toggleWish"
             :class="isWished ? 'bg-blue-500' : 'bg-yellow-500'"
@@ -50,6 +51,7 @@
           >
             {{ isWished ? 'Eliminar de wishlist' : 'Añadir a wishlist' }}
           </button>
+
         </div>
 
         <div class="mt-8 bg-gray-200 p-4 rounded-lg w-full">
@@ -270,7 +272,6 @@ const toggleFavorite = async () => {
     console.error('Error al alternar estado de favorito:', err);
   }
 };
-
 
 const checkIfWished = async () => {
   try {
