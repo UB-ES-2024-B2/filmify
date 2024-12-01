@@ -7,7 +7,7 @@ begin
   elsif not exists (select 1 from "Usuarios Auth" where id = user_id) then
     return false;
 
-  elsif exists (select 1 from "Whishlist" where user_fk = user_id and movie_fk = movie_id) then
+  elsif exists (select 1 from "Wishlist" where user_fk = user_id and movie_fk = movie_id) then
     return true;
 
   else
