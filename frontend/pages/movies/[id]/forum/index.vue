@@ -1,41 +1,51 @@
 <template>
-    <main>
-      <section>
-        <div v-if="!movieTitle || forum_exist === null" class="text-center">
-          <p class="text-gray-500 text-lg">Loading forum...</p>
-        </div>
-  
-        <div v-else>
-          <div v-if="forum_exist">
-            <!-- Forum Header -->
-            <div class="flex justify-between items-center mb-6">
-                <div>
-                    <h1 class="text-4xl font-bold">{{ forum[0]?.name }}</h1>
-                    <h3 class="">{{ forum[0]?.description }}</h3>
-                </div>
-                <div>
-                    <UButton 
-                    v-if="user" 
-                    class="mx-auto px-8"
-                    color="purple"
-                    size="xl">
-                    Post
-                    </UButton>
-                </div>
+  <main>
+    <section>
+      <!-- Loading State -->
+      <div v-if="!movieTitle || forum_exist === null" class="text-center">
+        <p id="loading-forum" class="text-gray-500 text-lg">Loading forum...</p>
+      </div>
+
+      <!-- Forum State -->
+      <div v-else>
+        <!-- Forum Exists -->
+        <div v-if="forum_exist" id="forum-exists">
+          <!-- Forum Header -->
+          <div id="forum-header" class="flex justify-between items-center mb-6">
+            <div>
+              <h1 id="forum-name" class="text-4xl font-bold">{{ forum[0]?.name }}</h1>
+              <h3 id="forum-description">{{ forum[0]?.description }}</h3>
             </div>
-            <!-- Posts Container -->
-            <div class="container mx-auto mt-6">
-              <div class="space-y-6"> 
-              </div>
+            <div>
+              <UButton 
+                id="post-button"
+                v-if="user" 
+                class="mx-auto px-8"
+                color="purple"
+                size="xl">
+                Post
+              </UButton>
             </div>
           </div>
-          <div v-else>
-              <h1 class="text-4xl font-bold"> El Foro de la película {{ movieTitle }} aún no está disponible.</h1>
+          <!-- Posts Container -->
+          <div id="posts-container" class="container mx-auto mt-6">
+            <div class="space-y-6">
+              <!-- Post content goes here -->
+            </div>
           </div>
         </div>
-      </section>
-    </main>
-  </template>
+
+        <!-- Forum Not Available -->
+        <div v-else id="forum-not-available">
+          <h1 class="text-4xl font-bold">
+            El Foro de la película {{ movieTitle }} aún no está disponible.
+          </h1>
+        </div>
+      </div>
+    </section>
+  </main>
+</template>
+
   
   <script setup>
   import { useRoute } from 'vue-router';
