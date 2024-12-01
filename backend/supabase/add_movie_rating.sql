@@ -11,11 +11,11 @@ begin
     UPDATE "Valoraciones" 
     SET rating = new_rating
     WHERE user_fk = user_id AND movie_fk = movie_id;
-    return query values (true, 'Rating added successfully.');
+    return query values (true, 'Rating updated successfully.');
   else
     INSERT INTO "Valoraciones" (user_fk, movie_fk, rating)
     values (user_id, movie_id, new_rating);
-    return query values (true, 'Rating updated successfully.');
+    return query values (true, 'Rating added successfully.');
   end if;
 end
 $$ language plpgsql;
