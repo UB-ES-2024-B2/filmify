@@ -42,6 +42,12 @@ const client = useSupabaseAuthClient()
 const user = useSupabaseUser()
 const loading = ref(false)
 
+// En un componente o página de Nuxt, usa 'useRuntimeConfig'
+const config = useRuntimeConfig();
+
+console.log('Supabase URL:', config.public.SUPABASE_URL);
+console.log('Supabase Key:', config.public.SUPABASE_KEY);
+
 const logout = async () => {
   loading.value = true
   const { error } = await client.auth.signOut()

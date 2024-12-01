@@ -30,7 +30,3 @@ export default defineNuxtConfig({
     }
   }
 })
-
-// Aquí también puedes poner los console.log para verificar
-console.log('Supabase URL:', process.env.DATABASE_URL);
-console.log('Supabase Key:', process.env.API_KEY);
