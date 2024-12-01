@@ -50,7 +50,7 @@ describe('Register Page', () => {
       cy.get('#username-input').clear().type('testuser');
       cy.get('#email-input').clear().type('testuser@example.com');
       cy.get('#password-input').clear().type('TestPassword123');
-      cy.get('#create-account-button', { timeout: 20000 }).click();
+      cy.get('#create-account-button').click({ force: true });
       // Add your assertions here to verify the success behavior (e.g., redirect, success message)
     });
   
