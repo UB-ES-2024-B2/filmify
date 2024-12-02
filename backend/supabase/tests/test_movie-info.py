@@ -20,7 +20,6 @@ def db_connection():
 movie_id = 12
 
 # - Movie Details
-@pytest.fixture
 def test_movie_details(db_connection):
     response = db_connection.rpc("get_movie_details", {'movie_id': movie_id}).execute()
     assert len(response.data) == 1
