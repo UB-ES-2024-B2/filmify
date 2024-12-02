@@ -23,5 +23,7 @@ export default defineNuxtConfig({
         { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono&display=swap' },
       ]
     }
-  }
+  },
+
+  compatibilityDate: '2024-12-01'
 })
