@@ -3,8 +3,8 @@
     <section
       class="container mx-auto flex flex-col gap-5 items-center justify-center mt-6 scroll-mt-[120px] min-h-screen"
     >
+      <!-- Contingut principal -->
       <div v-if="!movie" class="text-center">
-
         <p class="text-gray-500 text-lg" id="loading-message">Loading movie details...</p>
       </div>
 
@@ -24,7 +24,6 @@
             id="movie-poster"
           />
           <div class="flex flex-col md:w-2/3">
-            <!-- Estrellitas del rating promedio -->
             <div class="flex items-center justify-center gap-4">
               <NuxtRating
                 class="flex"
@@ -33,7 +32,6 @@
                 :rating-size="30"
                 :activeColor="'#800080'"
               />
-              <!-- Botón para abrir el modal de valoración -->
               <button
                 @click="openRatingModal"
                 class="bg-purple-600 text-white font-bold py-2 px-4 rounded"
@@ -41,44 +39,27 @@
                 Valorar
               </button>
             </div>
-            <div 
-              v-if="loginError" 
-              class="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50"
-            >
-              <div class="bg-white p-6 rounded-md w-96 text-center">
-                <h2 class="text-xl font-semibold mb-4 text-red-600">¡Error!</h2>
-                <p class="text-gray-700 mb-4">Necesitas iniciar sesión para valorar esta película.</p>
-                <div class="flex justify-center gap-4">
-                  <!-- Botón para cerrar el modal -->
-                  <button
-                    @click="loginError = false"
-                    class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-700"
-                  >
-                    Cerrar
-                  </button>
-                  <!-- Botón para redirigir al login -->
-                  <button
-                    @click="goToLogin"
-                    class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-800"
-                  >
-                    Ir a Login
-                  </button>
-                </div>
-              </div>
-            </div>
             <p class="text-gray-500 text-lg md:text-xl mt-4">{{ movie.overview }}</p>
+            <!-- Botó per anar al fòrum -->
+            <UButton
+              @click="goToForum"
+              class="mx-auto px-8 mt-6"
+              color="purple"
+              size="xl"
+              id="forum-button"
+            >
+              Foro
+            </UButton>
           </div>
         </div>
 
-        <!-- Modal para valorar película -->
-        <div 
-          v-if="isRatingModalOpen" 
+        <!-- Modal per valorar pel·lícula -->
+        <div
+          v-if="isRatingModalOpen"
           class="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50"
         >
           <div class="bg-white p-6 rounded-md w-96">
             <h2 class="text-xl font-semibold mb-4 text-center">Valora esta película</h2>
-            
-            <!-- Input de valoración interactiva -->
             <div class="flex justify-center">
               <NuxtRating
                 :read-only="false"
@@ -87,10 +68,7 @@
                 @rating-selected="updateRating"
                 :ratingValue="userRating"
               />
-
             </div>
-
-            <!-- Botones de acción -->
             <div class="flex justify-end gap-4 mt-4">
               <button
                 @click="closeRatingModal"
@@ -105,32 +83,11 @@
                 Guardar
               </button>
             </div>
-          <div class="flex flex-col mt-8 md:w-2/3">
-            <NuxtRating
-              class="flex w-full justify-center mb-4"
-              :read-only="true"
-              :ratingValue="(movie?.vote_average / 10) * 5"
-              :rating-size="30"
-              :activeColor="'#800080'"
-              id="movie-rating"
-            />
-            <p class="text-gray-500 text-lg md:text-xl my-4" id="movie-overview">{{ movie?.overview || 'No overview available.' }}</p>
-            <UButton
-              @click="goToForum"
-              class="mx-auto px-8"
-              color="purple"
-              size="xl"
-              id="forum-button"
-            >
-              Foro
-            </UButton>
           </div>
         </div>
 
-        <!-- Botón de favoritos -->
-
+        <!-- Botons per Favorits i Wishlist -->
         <div class="mt-4 flex justify-center gap-4">
-
           <button
             v-if="userID"
             @click="toggleFavorite"
@@ -147,15 +104,14 @@
           >
             {{ isWished ? 'Eliminar de wishlist' : 'Añadir a wishlist' }}
           </button>
-
         </div>
+
+        <!-- Informació de la pel·lícula -->
         <div class="mt-8 bg-gray-200 p-4 rounded-lg w-full" id="movie-info">
           <h2 class="text-3xl text-center font-bold mb-6" id="info-heading">Info</h2>
-
           <div class="grid grid-cols-5 gap-4 text-gray-700">
             <div class="font-bold col-span-1" id="director-heading">Director:</div>
             <div class="col-span-4" id="director-name">{{ director[0]?.director_name || 'N/A' }}</div>
-
             <div class="font-bold col-span-1" id="cast-heading">Actores:</div>
             <div class="col-span-4">
               <ul class="flex flex-wrap gap-2" id="cast-list">
@@ -164,10 +120,8 @@
                 </li>
               </ul>
             </div>
-
             <div class="font-bold col-span-1" id="language-heading">Idioma:</div>
             <div class="col-span-4" id="language-name">{{ language[0]?.language_name || 'N/A' }}</div>
-
             <div class="font-bold col-span-1" id="genre-heading">Género:</div>
             <div class="col-span-4">
               <ul class="flex flex-wrap gap-2" id="genre-list">
@@ -176,7 +130,6 @@
                 </li>
               </ul>
             </div>
-
             <div class="font-bold col-span-1" id="release-date-heading">Fecha de estreno:</div>
             <div class="col-span-4" id="release-date">{{ movie?.release_date || 'N/A' }}</div>
           </div>
@@ -185,6 +138,7 @@
     </section>
   </main>
 </template>
+
 
 
 <script setup lang="ts">
