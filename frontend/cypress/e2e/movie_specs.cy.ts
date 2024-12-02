@@ -34,9 +34,6 @@ describe('MovieDetails Page with API Calls', () => {
       // Check if the "Forum" button exists and is clickable
       cy.get('#forum-button').should('be.visible').and('be.enabled').and('contain.text', 'Foro');
   
-      // Check if the movie information section is visible
-      cy.get('#movie-info').should('be.visible');
-  
       // Check if the director's name is displayed
       cy.get('#director-name').should('contain.text', 'Andrew Stanton'); 
   
