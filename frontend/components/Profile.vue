@@ -18,7 +18,7 @@
       <!-- Botón para abrir el modal -->
       <UButton
         style="margin-top: 10px;"
-        @click="toggleEditModal"
+        @click="notifyProfileUpdated"
         class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-800"
         size="md"
       >
@@ -35,17 +35,10 @@
     </div>
   </div>
 
-  <!-- Modal para editar perfil -->
-  <EditProfileModal
-    v-if="isEditModalOpen"
-    :userData="userData"
-    @close="toggleEditModal"
-  />
 </template>
 
 <script setup>
 import { ref } from 'vue';
-import EditProfileModal from '@/components/EditProfileModal.vue'; // Importamos el modal
 
 const props = defineProps({
 userData: Object
@@ -69,17 +62,14 @@ onMounted(async => {
   fetchAverageRating();
 });
 
-const emit = defineEmits(['modify-pfp']);
-
-// Estado del modal
-const isEditModalOpen = ref(false);
+const emit = defineEmits(['modify-pfp', 'profile-updated']);
 
 const modifyPFP = () => {
 emit('modify-pfp');
 };
 
-// Función para abrir/cerrar el modal
-const toggleEditModal = () => {
-isEditModalOpen.value = !isEditModalOpen.value;
+const notifyProfileUpdated = () => {
+  emit('profile-updated');
 };
+
 </script>

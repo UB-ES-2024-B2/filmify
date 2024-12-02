@@ -1,9 +1,9 @@
 <template>
   <main class="px-10 overflow-y-auto dark:bg-slate-800 page xl:px-12">
     <section class="container mx-auto flex flex-col gap-5 items-center justify-center mt-6 scroll-mt-[120px] min-h-screen">
-      <Profile :userData="userInfo" @modify-pfp="openModal" v-if="info"/>
+      <Profile :userData="userInfo" @modify-pfp="openModal" @profile-updated="openModal2" v-if="info"/>
 
-<!-- Modal para crear el post-->
+      <!-- Modal para cambiar foto perfil-->
       <div v-if="isModalOpen" class="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50" style="z-index: 10000;">
         <div class="bg-white p-6 rounded-md w-96">
           <h2 class="text-xl font-semibold mb-4">Modificar Foto de Perfil</h2>
@@ -22,6 +22,45 @@
           </div>
         </div>
       </div>
+    <!-- Modal para editar el perfil -->
+    <div 
+      v-if="isModalOpen2" 
+      class="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50"
+    >
+      <div class="bg-white p-6 rounded-md w-96">
+        <h2 class="text-xl font-semibold mb-4">Editar Perfil</h2>
+
+        <!-- Input Nombre de usuario -->
+        <div class="mb-4">
+          <label for="username" class="block text-sm font-medium text-gray-700">Nombre de usuario</label>
+          <input 
+            v-model="updatedProfile.username" 
+            type="text" 
+            id="username" 
+            class="mt-1 block w-full border border-gray-300 rounded-md p-2"
+            placeholder="Escribe tu nombre de usuario"
+          />
+        </div>
+
+        <!-- Input Bio -->
+        <div class="mb-4">
+          <label for="bio" class="block text-sm font-medium text-gray-700">Bio</label>
+          <textarea
+            v-model="updatedProfile.bio"
+            id="bio"
+            class="mt-1 block w-full border border-gray-300 rounded-md p-2"
+            placeholder="Escribe tu biografía"
+          ></textarea>
+        </div>
+
+        <!-- Botones -->
+        <div class="flex justify-end gap-4">
+          <UButton @click="closeModal2" class=" px-4" color="gray" size="md">Cancelar</UButton>
+          <UButton @click="submitProfileUpdate" class=" px-4" color="purple" size="md">Guardar</UButton>
+        </div>
+      </div>
+    </div>
+
 
       <h2 class="text-2xl font-display">Favoritas</h2>
       <template v-if="fav_list.length > 0">
@@ -185,6 +224,53 @@ const closeModal = () => {
 };
 const file = ref(null)
 
+// Estado de modal
+const isModalOpen2 = ref(false);
+
+// Datos del perfil actualizados
+const updatedProfile = ref({
+  username: '',
+  bio: ''
+});
+
+// Función para abrir el modal
+const openModal2 = () => {
+  updatedProfile.value.username = userInfo.value.user_name;
+  updatedProfile.value.bio = userInfo.value.bio;
+  isModalOpen2.value = true;
+};
+
+// Handle post submission
+const submitProfileUpdate = () => {
+  if (updatedProfile.value.username && updatedProfile.value.bio) {
+    FetchProfileUpdate();
+    closeModal2(); // Cierra tras publicar
+  } else {
+    alert('Escribe nombre de usuario y bio.');
+  }
+};
+
+const FetchProfileUpdate = async () => {
+  const { data, error } = await client.rpc('edituserinfo', {
+    userbio: updatedProfile.value.bio,
+    userid: user_id.value,
+    username: updatedProfile.value.username
+  });
+
+  if (error) {
+    console.error('Error del backend:', error);
+  } else {
+    if (data) {
+      fetchUserInfo();
+    }
+  }
+};
+
+// Cierra modal
+const closeModal2 = () => {
+  isModalOpen2.value = false;
+};
+
 const onFileChange = (event: Event) => {
   const input = event.target as HTMLInputElement;
   if (input.files && input.files[0]) {
@@ -246,4 +332,5 @@ const fetchAddPFP = async (url) => {
     }
   }
 };
+
 </script>
