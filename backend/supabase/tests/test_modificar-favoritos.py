@@ -45,6 +45,22 @@ def test_addToListAgain(db_connection):
     assert response.data == False
 
 #################
+# Check if already exists tests
+#################
+
+def test_checkIfAlreadyExistsWrongMovie(db_connection):
+    response = db_connection.rpc('is_favorited', {'user_id': userID, 'movie_id': 1}).execute()
+    assert response.data == False
+
+def test_checkIfAlreadyExistsWrongUser(db_connection):
+    response = db_connection.rpc('is_favorited', {'user_id': '0c518e96-a5bb-4a29-9d9c-1fb022a5a404', 'movie_id': movieID}).execute()
+    assert response.data == False
+
+def test_checkIfAlreadyExists(db_connection):
+    response = db_connection.rpc('is_favorited', {'user_id': userID, 'movie_id': movieID}).execute()
+    assert response.data == True
+
+#################
 # Remove tests
 #################
 
