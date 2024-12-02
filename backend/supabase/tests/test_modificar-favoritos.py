@@ -49,18 +49,18 @@ def test_addToListAgain(db_connection):
 #################
 
 def test_removeFromListWrongMovie(db_connection):
-    response = db_connection.rpc('add_to_favorites', {'user_id': userID, 'movie_id': 1}).execute()
+    response = db_connection.rpc('remove_from_favorites', {'user_id': userID, 'movie_id': 1}).execute()
     assert response.data == False
 
 def test_removeFromListWrongUser(db_connection):
-    response = db_connection.rpc('add_to_favorites', {'user_id': '0c518e96-a5bb-4a29-9d9c-1fb022a5a404', 'movie_id': movieID}).execute()
+    response = db_connection.rpc('remove_from_favorites', {'user_id': '0c518e96-a5bb-4a29-9d9c-1fb022a5a404', 'movie_id': movieID}).execute()
     assert response.data == False
 
 def test_removeFromList(db_connection):
     response = db_connection.rpc('remove_from_favorites', {'user_id': userID, 'movie_id': movieID}).execute()
     assert response.data == True
 
-def test_addToListAgain(db_connection):
-    response = db_connection.rpc('add_to_favorites', {'user_id': userID, 'movie_id': movieID}).execute()
+def test_removeFromListAgain(db_connection):
+    response = db_connection.rpc('remove_from_favorites', {'user_id': userID, 'movie_id': movieID}).execute()
     assert response.data == False
 
