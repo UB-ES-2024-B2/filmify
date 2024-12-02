@@ -46,14 +46,26 @@
         </div>
 
         <!-- Botón de favoritos -->
-        <div class="mt-4 flex justify-center">
+
+        <div class="mt-4 flex justify-center gap-4">
+
           <button
+            v-if="userID"
             @click="toggleFavorite"
             :class="isFavorited ? 'bg-red-500' : 'bg-green-500'"
             class="text-white font-bold py-2 px-4 rounded"
           >
             {{ isFavorited ? 'Eliminar de favoritos' : 'Añadir a favoritos' }}
           </button>
+          <button
+            v-if="userID"
+            @click="toggleWish"
+            :class="isWished ? 'bg-blue-500' : 'bg-yellow-500'"
+            class="text-white font-bold py-2 px-4 rounded"
+          >
+            {{ isWished ? 'Eliminar de wishlist' : 'Añadir a wishlist' }}
+          </button>
+
         </div>
         <div class="mt-8 bg-gray-200 p-4 rounded-lg w-full" id="movie-info">
           <h2 class="text-3xl text-center font-bold mb-6" id="info-heading">Info</h2>
@@ -112,6 +124,7 @@ const goToForum = () => {
 
 
 const isFavorited = ref(false); // Estado inicial
+const isWished = ref(false); // Estado inicial
 const userID = ref(null);
 
 const movie = ref(null);
@@ -284,6 +297,67 @@ const toggleFavorite = async () => {
   }
 };
 
+const checkIfWished = async () => {
+  try {
+    const { data, error } = await client.rpc('is_wished', {
+      user_id: userID.value,
+      movie_id: movieID,
+    });
+
+    if (error) {
+      console.error('Error verificando si esta en la wishlist:', error);
+      return false;
+    }
+    isWished.value = data
+    return data; // Devuelve true si es favorita, false si no
+  } catch (err) {
+    console.error('Error al comprobar si esta en la wishlist:', err);
+    return false;
+  }
+};
+
+
+// Toggle wishlist status
+const toggleWish = async () => {
+  try {
+    if (!movie.value) return; // Asegúrate de que haya una película cargada antes de continuar
+
+    if (isWished.value) {
+      // Lógica para eliminar de favoritos
+      const { data, error } = await client.rpc('remove_from_wishlist', {
+        user_id: userID.value, // userID debe estar definido
+        movie_id: movieID, // movieID es la ID de la película actual
+      });
+
+      if (error) {
+        console.error('Error eliminando de wishlist:', error);
+      } else if (data) {
+        isWished.value = false;
+        console.log(`${movie.value.title} eliminado de wishlist.`);
+      } else {
+        console.warn('No se pudo eliminar de wishlist. Verifica las restricciones.');
+      }
+    } else {
+      // Lógica para añadir a favoritos
+      const { data, error } = await client.rpc('add_to_wishlist', {
+        user_id: userID.value, // userID debe estar definido
+        movie_id: movieID, // movieID es la ID de la película actual
+      });
+
+      if (error) {
+        console.error('Error añadiendo a wishlist:', error);
+      } else if (data) {
+        isWished.value = true;
+        console.log(`${movie.value.title} añadido a wishlist.`);
+      } else {
+        console.warn('No se pudo añadir a wishlist. Verifica las restricciones.');
+      }
+    }
+  } catch (err) {
+    console.error('Error al alternar estado de wishlist:', err);
+  }
+};
+
 onMounted(async () => {
   await fetchMovieDetails();
   await fetchGenres();
@@ -292,6 +366,7 @@ onMounted(async () => {
   await fetchLanguage();
   await fetchUserId(); // Esperar que fetchUserId termine antes de llamar a checkIfFavorited
   await checkIfFavorited(); // Llamar a checkIfFavorited después de que userID esté disponible
+  await checkIfWished();
 });
 
 </script>
