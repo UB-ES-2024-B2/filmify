@@ -1,48 +1,95 @@
 <template>
   <main class="px-10 overflow-y-auto dark:bg-slate-800 page xl:px-12">
-    <section class="container mx-auto flex flex-col gap-5 items-center justify-center mt-6 scroll-mt-[120px] min-h-screen">
-      <Profile :userData="userInfo" @modify-pfp="openModal" @profile-updated="openModal2" v-if="info"/>
+    <div :class="{ 'no-click': isModalOpen || isModalOpen2 }">
+      <section
+        class="container mx-auto flex flex-col gap-5 items-center justify-center mt-6 scroll-mt-[120px] min-h-screen"
+      >
+        <Profile
+          :userData="userInfo"
+          :averageRating="averageRating"
+          @modify-pfp="openModal"
+          @profile-updated="openModal2"
+          v-if="info"
+        />
 
-      <!-- Modal para cambiar foto perfil-->
-      <div v-if="isModalOpen" class="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50" style="z-index: 10000;">
-        <div class="bg-white p-6 rounded-md w-96">
-          <h2 class="text-xl font-semibold mb-4">Modificar Foto de Perfil</h2>
+        <h2 class="text-2xl font-display">Favoritas</h2>
+        <template v-if="fav_list.length > 0">
+          <UCarousel
+            class="px-10"
+            v-slot="{ item, index }"
+            :items="fav_list"
+            :ui="{
+              wrapper: 'w-full flex justify-center',
+              container: 'flex justify-center gap-5',
+              item: 'h-[350px] w-[150px]',
+            }"
+            arrows
+          >
+            <CarouselCard :item="item" :index="index" />
+          </UCarousel>
+        </template>
+        <template v-else>
+          <EmptyCarouselCard />
+        </template>
 
-          <img :src="newPFP" class="rounded img-fluid" alt="...">
+        <h2 class="text-2xl font-display">Wishlist</h2>
+        <template v-if="wish_list.length > 0">
+          <UCarousel
+            class="px-10"
+            v-slot="{ item, index }"
+            :items="wish_list"
+            :ui="{
+              wrapper: 'w-full flex justify-center',
+              container: 'flex justify-center gap-5',
+              item: 'h-[350px] w-[150px]',
+            }"
+            arrows
+          >
+            <CarouselCard :item="item" :index="index" />
+          </UCarousel>
+        </template>
+        <template v-else>
+          <EmptyCarouselCard />
+        </template>
+      </section>
+    </div>
 
-          <!-- Input comentario-->
-          <div style="margin-top: 2mm;">
-            <input class="flex" type="file" accept="image/*" @change="onFileChange">
-          </div>
-
-          <!-- Botones -->
-          <div class="flex justify-center gap-4" style="margin-top: 2mm;">
-            <UButton @click="closeModal" class=" px-4" color="gray" size="md">Cancelar</UButton>
-            <UButton @click="submitPFP" class=" px-4" color="purple" size="md">Modificar</UButton>
-          </div>
+    <!-- Modal para cambiar foto perfil -->
+    <div
+      v-if="isModalOpen"
+      class="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50"
+      style="z-index: 10000;"
+    >
+      <div class="bg-white p-6 rounded-md w-96">
+        <h2 class="text-xl font-semibold mb-4">Modificar Foto de Perfil</h2>
+        <img :src="newPFP" class="rounded img-fluid" alt="...">
+        <div style="margin-top: 2mm;">
+          <input class="flex" type="file" accept="image/*" @change="onFileChange" />
+        </div>
+        <div class="flex justify-center gap-4" style="margin-top: 2mm;">
+          <UButton @click="closeModal" class="px-4" color="gray" size="md">Cancelar</UButton>
+          <UButton @click="submitPFP" class="px-4" color="purple" size="md">Modificar</UButton>
         </div>
       </div>
+    </div>
+
     <!-- Modal para editar el perfil -->
-    <div 
-      v-if="isModalOpen2" 
+    <div
+      v-if="isModalOpen2"
       class="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50"
     >
       <div class="bg-white p-6 rounded-md w-96">
         <h2 class="text-xl font-semibold mb-4">Editar Perfil</h2>
-
-        <!-- Input Nombre de usuario -->
         <div class="mb-4">
           <label for="username" class="block text-sm font-medium text-gray-700">Nombre de usuario</label>
-          <input 
-            v-model="updatedProfile.username" 
-            type="text" 
-            id="username" 
+          <input
+            v-model="updatedProfile.username"
+            type="text"
+            id="username"
             class="mt-1 block w-full border border-gray-300 rounded-md p-2"
             placeholder="Escribe tu nombre de usuario"
           />
         </div>
-
-        <!-- Input Bio -->
         <div class="mb-4">
           <label for="bio" class="block text-sm font-medium text-gray-700">Bio</label>
           <textarea
@@ -52,57 +99,12 @@
             placeholder="Escribe tu biografía"
           ></textarea>
         </div>
-
-        <!-- Botones -->
         <div class="flex justify-end gap-4">
-          <UButton @click="closeModal2" class=" px-4" color="gray" size="md">Cancelar</UButton>
-          <UButton @click="submitProfileUpdate" class=" px-4" color="purple" size="md">Guardar</UButton>
+          <UButton @click="closeModal2" class="px-4" color="gray" size="md">Cancelar</UButton>
+          <UButton @click="submitProfileUpdate" class="px-4" color="purple" size="md">Guardar</UButton>
         </div>
       </div>
     </div>
-
-
-      <h2 class="text-2xl font-display">Favoritas</h2>
-      <template v-if="fav_list.length > 0">
-        <UCarousel 
-          class="px-10"
-          v-slot="{ item, index }"
-          :items="fav_list"
-          :ui="{
-            wrapper: 'w-full flex justify-center',
-            container: 'flex justify-center gap-5',
-            item: 'h-[350px] w-[150px]',
-          }"
-          arrows
-        >
-          <CarouselCard :item="item" :index="index" />
-        </UCarousel>
-      </template>
-      <template v-else>
-        <EmptyCarouselCard />
-      </template>
-
-      <h2 class="text-2xl font-display">Wishlist</h2>
-      <template v-if="wish_list.length > 0">
-        <UCarousel 
-          class="px-10"
-          v-slot="{ item, index }"
-          :items="wish_list"
-          :ui="{
-            wrapper: 'w-full flex justify-center',
-            container: 'flex justify-center gap-5',
-            item: 'h-[350px] w-[150px]',
-          }"
-          arrows
-        >
-          <CarouselCard :item="item" :index="index" />
-        </UCarousel>
-      </template>
-      <template v-else>
-        <EmptyCarouselCard />
-      </template>
-
-    </section>
   </main>
 </template>
   
@@ -131,6 +133,9 @@ const wish_list = ref([]);
 
 // Reactive user ID
 const user_id = ref(null);
+
+// Reactive average rating
+const averageRating = ref(null);
 
 const fetchUserId = async () => {
   const { data: sessionData, error: sessionError } = await client.auth.getSession();
@@ -175,12 +180,23 @@ const fetchWishList = async () => {
   }
 };
 
+
+const fetchAverageRating = async () => {
+  const { data, error } = await useSupabaseAuthClient().rpc('calculate_mean_rating', { user_id: user_id.value });
+  if (error) {
+    console.error(error);
+  } else {
+    averageRating.value = data;
+  }
+}
+
 onMounted(async () => {
   await fetchUserId();
   if (user_id.value) {
     await fetchFavList();
     await fetchWishList();
     await fetchUserInfo();
+    await fetchAverageRating();
   }
 });
 
