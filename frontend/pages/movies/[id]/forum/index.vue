@@ -2,6 +2,8 @@
   <main>
     <section>
       <div v-if="!movieTitle || forum_exist === null" class="text-center">
+
+
         <p id="loading-forum" class="text-gray-500 text-lg">Loading forum...</p>
       </div>
 
@@ -28,7 +30,9 @@
           </div>
 
           <!-- Posts Container -->
+
           <div id="posts-container" class="container mx-auto mt-6">
+
             <div class="space-y-6">
               <!-- Loop through posts -->
               <PostCard @change-vote="changeVote"
@@ -39,7 +43,9 @@
             </div>
           </div>
         </div>
+
         <div v-else id="forum-not-available">
+
           <div class="flex justify-between items-center mb-6">
             <h1 class="text-4xl font-bold"> El Foro de la película {{ movieTitle }} aun no está disponible.</h1>
           </div>
