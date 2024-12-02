@@ -392,7 +392,7 @@ const submitRating = async () => {
       console.error('Error enviando la valoración:', error);
       alert('Hubo un problema al enviar tu valoración.');
     } else if (data) {
-      alert(data.message); // Mensaje de éxito del backend
+      //alert(data.message); // Mensaje de éxito del backend
       closeRatingModal(); // Cierra el modal tras guardar
     }
   } catch (err) {
