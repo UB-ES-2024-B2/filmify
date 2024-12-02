@@ -1,0 +1,44 @@
+name: Run Cypress Tests with Local Server
+
+on:
+  pull_request:
+    branches:
+      - main
+      - Develop-Sprint-2
+      - Pre-production
+
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Install dependencies
+        run: npm install
+        working-directory: ./frontend
+
+      - name: Start the application
+        run: npm run dev &
+        working-directory: ./frontend
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          PORT: 3000
+
+      - name: Wait for the application to be ready
+        run: npx wait-on http://localhost:3000
+
+      - name: Run Cypress Tests
+        env:
+          CYPRESS_BASE_URL: http://localhost:3000
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: npx cypress run
+        working-directory: ./frontend

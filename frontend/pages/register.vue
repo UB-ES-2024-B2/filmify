@@ -1,6 +1,6 @@
 <template>
   <div class="DaoRb">
-    <h1 class="eSHwvX">Regístrate</h1>
+    <h1 id="register-heading" class="eSHwvX">Regístrate</h1>
     <form @submit.prevent="signUp">
       <SuccessAlert :success-msg="succAlert" @clearError="clearError" />
       <ErrorAlert :error-msg="authError" @clearError="clearError" />
@@ -8,6 +8,7 @@
         <!-- Campo de Usuario -->
         <div class="fdCSlG">
           <UInput 
+            id="username-input"
             :class="{'input-error': fieldErrors.username}" 
             color="purple"
             icon="i-heroicons-user"
@@ -22,6 +23,7 @@
         <!-- Campo de Correo -->
         <div class="fdCSlG">
           <UInput 
+            id="email-input"
             :class="{'input-error': fieldErrors.email}" 
             color="purple"
             icon="i-heroicons-envelope"
@@ -35,6 +37,7 @@
         <!-- Campo de Contraseña -->
         <div class="fdCSlG">
           <UInput 
+            id="password-input"
             :class="{'input-error': fieldErrors.password}" 
             color="purple"
             icon="i-heroicons-lock-closed"
@@ -49,6 +52,7 @@
       <!-- Botón de Crear Cuenta -->
       <div class="jGQTZC">
         <UButton 
+          id="create-account-button"
           class="bjhGPG"
           color="purple"
           type="submit"
@@ -61,13 +65,14 @@
       </div>
       
       <!-- Enlace para iniciar sesión -->
-      <div class="mt-4 text-center">
+      <div id="login-link" class="mt-4 text-center">
         <span>Ya tienes cuenta? </span>
         <router-link to="/login" class="text-purple-800 hover:underline">Iniciar sesión</router-link>
       </div>
     </form>
   </div>
 </template>
+
 
 <script setup lang="ts">
 import { ref, reactive, computed, watch } from 'vue';
