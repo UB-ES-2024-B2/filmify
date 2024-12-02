@@ -1,7 +1,7 @@
 <template>
   <main class="px-10 overflow-y-auto dark:bg-slate-800 page xl:px-12">
     <section class="container mx-auto flex flex-col gap-5 items-center justify-center mt-6 scroll-mt-[120px] min-h-screen">
-      <Profile :userData="userInfo" @modify-pfp="openModal" @profile-updated="openModal2" v-if="info"/>
+      <Profile :userData="userInfo" :averageRating="averageRating" @modify-pfp="openModal" @profile-updated="openModal2" v-if="info"/>
 
       <!-- Modal para cambiar foto perfil-->
       <div v-if="isModalOpen" class="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50" style="z-index: 10000;">
@@ -132,6 +132,9 @@ const wish_list = ref([]);
 // Reactive user ID
 const user_id = ref(null);
 
+// Reactive average rating
+const averageRating = ref(null);
+
 const fetchUserId = async () => {
   const { data: sessionData, error: sessionError } = await client.auth.getSession();
 
@@ -175,12 +178,23 @@ const fetchWishList = async () => {
   }
 };
 
+
+const fetchAverageRating = async () => {
+  const { data, error } = await useSupabaseAuthClient().rpc('calculate_mean_rating', { user_id: user_id.value });
+  if (error) {
+    console.error(error);
+  } else {
+    averageRating.value = data;
+  }
+}
+
 onMounted(async () => {
   await fetchUserId();
   if (user_id.value) {
     await fetchFavList();
     await fetchWishList();
     await fetchUserInfo();
+    await fetchAverageRating();
   }
 });
 
