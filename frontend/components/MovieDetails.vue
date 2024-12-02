@@ -39,6 +39,31 @@
                 Valorar
               </button>
             </div>
+            <div 
+              v-if="loginError" 
+              class="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50"
+            >
+              <div class="bg-white p-6 rounded-md w-96 text-center">
+                <h2 class="text-xl font-semibold mb-4 text-red-600">¡Error!</h2>
+                <p class="text-gray-700 mb-4">Necesitas iniciar sesión para valorar esta película.</p>
+                <div class="flex justify-center gap-4">
+                  <!-- Botón para cerrar el modal -->
+                  <button
+                    @click="loginError = false"
+                    class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-700"
+                  >
+                    Cerrar
+                  </button>
+                  <!-- Botón para redirigir al login -->
+                  <button
+                    @click="goToLogin"
+                    class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-800"
+                  >
+                    Ir a Login
+                  </button>
+                </div>
+              </div>
+            </div>
             <p class="text-gray-500 text-lg md:text-xl mt-4">{{ movie.overview }}</p>
           </div>
         </div>
@@ -313,6 +338,14 @@ const toggleFavorite = async () => {
 
 const isRatingModalOpen = ref(false); // Controla el estado del modal
 const userRating = ref(0); // Valoración seleccionada por el usuario
+const loginError = ref(false); // Controla si el mensaje de error está visible
+
+const goToLogin = () => {
+  // Usa el enrutador para redirigir al usuario a la página de inicio de sesión
+  const router = useRouter();
+  router.push('/login');
+};
+
 
 const updateRating = (rating) => {
   console.log('Valor seleccionado:', rating); // Verifica el valor seleccionado
@@ -322,8 +355,14 @@ const updateRating = (rating) => {
 
 // Abre el modal de valoración
 const openRatingModal = () => {
+  if (!userID.value) {
+    loginError.value = true; // Muestra el mensaje de error
+    return;
+  }
   isRatingModalOpen.value = true;
 };
+
+
 
 // Cierra el modal de valoración
 const closeRatingModal = () => {
