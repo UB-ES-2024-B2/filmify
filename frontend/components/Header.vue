@@ -3,7 +3,7 @@
     <div id="header-container" class="container flex items-center justify-between h-full mx-auto flex-wrap">
       <NuxtLink
         id="header-logo-link"
-        :to="{ path: '/', hash: '#hero' }"
+        :to="{ path: '/'}"
         class="text-3xl font-bold dark:text-white text-purple-800 font-display"
       >
         <span id="header-logo-text" class="hidden md:inline">Filmify 🎞️</span>

@@ -6,7 +6,7 @@
         <div class="fNAZQD">
           <div class="dgrFox">
             <NuxtLink
-                :to="{ path: '/', hash: '#hero' }"
+                :to="{ path: '/'}"
                 class="text-5xl font-bold dark:text-white text-purple-800 font-display"
             >
               Filmify 🎞️
