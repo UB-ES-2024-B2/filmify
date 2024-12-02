@@ -2,19 +2,20 @@
   <main>
     <section>
       <div v-if="!movieTitle || forum_exist === null" class="text-center">
-        <p class="text-gray-500 text-lg">Loading forum...</p>
+        <p id="loading-forum" class="text-gray-500 text-lg">Loading forum...</p>
       </div>
 
       <div v-else>
-        <div v-if="forum_exist">
+        <div v-if="forum_exist" id="forum-exists">
           <!-- Forum Title -->
-          <div class="flex justify-between items-center mb-6">
+          <div id="forum-header" class="flex justify-between items-center mb-6">
             <div>
-                <h1 class="text-4xl font-bold">{{ forum[0]?.name }}</h1>
-                <h3 class="">{{ forum[0]?.description }}</h3>
+                <h1 id="forum-name" class="text-4xl font-bold">{{ forum[0]?.name }}</h1>
+                <h3 id="forum-description" class="">{{ forum[0]?.description }}</h3>
             </div>
             <div>
               <UButton 
+                id="post-button"
                 v-if="user" 
                 class="mx-auto px-8"
                 color="purple"
@@ -27,10 +28,10 @@
           </div>
 
           <!-- Posts Container -->
-          <div class="container mx-auto mt-6">
+          <div id="posts-container" class="container mx-auto mt-6">
             <div class="space-y-6">
               <!-- Loop through posts -->
-              <PostCard
+              <PostCard @change-vote="changeVote"
                 v-for="(post, index) in posts"
                 :key="index"
                 :post="post"
@@ -38,7 +39,7 @@
             </div>
           </div>
         </div>
-        <div v-else>
+        <div v-else id="forum-not-available">
           <div class="flex justify-between items-center mb-6">
             <h1 class="text-4xl font-bold"> El Foro de la película {{ movieTitle }} aun no está disponible.</h1>
           </div>
@@ -80,6 +81,7 @@
         <!-- Botones -->
         <div class="flex justify-end gap-4">
           <UButton @click="closeModal" class=" px-4" color="gray" size="md">Cancelar</UButton>
+          <br/>
           <UButton @click="submitPost" class=" px-4" color="purple" size="md">Post</UButton>
         </div>
       </div>
@@ -135,6 +137,36 @@ const submitPost = () => {
   }
 };
 
+const changeVote = (post, vote_type) => {
+  if (post.vote === null){
+    fetchVotePost(post, vote_type)
+  }else{
+    fetchUpdateVotePost(post, vote_type)
+  }
+};
+
+const fetchVotePost = async (post, vote_type) => {
+  const { error } = await client.rpc('vote_post',{input_user_id: u_id.value, input_post_id: post.post_id, vote: vote_type});
+
+  if (error) {
+    console.error('Error al crear el post:', error);
+  } 
+  else {
+    fetchPostsForum();
+  }
+};
+
+const fetchUpdateVotePost = async (post, vote_type) => {
+  const { error } = await client.rpc('update_vote_post',{input_user_id: u_id.value, input_post_id: post.post_id, vote: vote_type});
+
+  if (error) {
+    console.error('Error al crear el post:', error);
+  } 
+  else {
+    fetchPostsForum();
+  }
+};
+
 const fetchCreatePost = async () => {
   const { error } = await client.rpc('create_post',{title: newPost.value.title, content: newPost.value.content, input_movie_id: parseInt(movieId, 10), user_id: u_id.value});
 
@@ -181,8 +213,13 @@ onMounted(fetchExistsForum);
 // Dummy posts data (Now reactive)
 const posts = ref([]);
 
+
+// Reactive user ID
+const u_id = ref(null);
+
 const fetchPostsForum = async () => {
-  const { data, error } = await client.rpc('get_posts',{input_movie_id: parseInt(movieId, 10)});
+  
+  const { data, error } = await client.rpc('get_posts',{input_movie_id: parseInt(movieId, 10), input_user_id: u_id.value});
 
   if (error) {
     console.error('Error al obtener posts:', error);
@@ -191,8 +228,6 @@ const fetchPostsForum = async () => {
   }
 };
 
-// Reactive user ID
-const u_id = ref(null);
 
 const fetchUserId = async () => {
   const { data: sessionData, error: sessionError } = await client.auth.getSession();
@@ -209,6 +244,7 @@ const fetchUserId = async () => {
     console.error('Error fetching user:', userError);
   } else {
     u_id.value = user.user.id || null;
+    fetchPostsForum();
   }
 };
 
@@ -222,5 +258,6 @@ onMounted(set_UserId);
 
 
 </script>
+  
   
   

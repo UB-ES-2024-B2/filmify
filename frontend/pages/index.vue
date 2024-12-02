@@ -1,10 +1,9 @@
 <template>
-  <main class="px-10 overflow-y-auto dark:bg-slate-800 page xl:px-0">
-    <section
-      class="container mx-auto flex flex-col gap-5 items-center justify-center mt-6 scroll-mt-[120px] min-h-screen"
-    >
-      <h2 class="text-2xl font-display">Nuevas</h2>
-      <UCarousel 
+  <main id="main-page" class="px-10 overflow-y-auto dark:bg-slate-800 page xl:px-0">
+    <section id="newest-section" class="container mx-auto flex flex-col gap-5 items-center justify-center mt-6 scroll-mt-[120px] min-h-screen">
+      <h2 id="newest-header" class="text-2xl font-display">Nuevas</h2>
+      <UCarousel
+        id="newest-carousel"
         class="px-10"
         v-slot="{ item, index }"
         :items="newest_movies"
@@ -15,11 +14,12 @@
         }"
         arrows
       >
-        <CarouselCard :item="item" :index="index" />
+        <CarouselCard id="newest-carousel-card" :item="item" :index="index" />
       </UCarousel>
 
-      <h2 class="text-2xl font-display">Populares</h2>
-      <UCarousel 
+      <h2 id="popular-header" class="text-2xl font-display">Populares</h2>
+      <UCarousel
+        id="popular-carousel"
         class="px-10"
         v-slot="{ item, index }"
         :items="popular_movies"
@@ -30,7 +30,7 @@
         }"
         arrows
       >
-        <CarouselCard :item="item" :index="index" />
+        <CarouselCard id="popular-carousel-card" :item="item" :index="index" />
       </UCarousel>
     </section>
   </main>
