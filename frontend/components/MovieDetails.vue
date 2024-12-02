@@ -38,6 +38,7 @@
         <div class="mt-4 flex justify-center gap-4">
 
           <button
+            v-if="userID"
             @click="toggleFavorite"
             :class="isFavorited ? 'bg-red-500' : 'bg-green-500'"
             class="text-white font-bold py-2 px-4 rounded"
@@ -45,6 +46,7 @@
             {{ isFavorited ? 'Eliminar de favoritos' : 'Añadir a favoritos' }}
           </button>
           <button
+            v-if="userID"
             @click="toggleWish"
             :class="isWished ? 'bg-blue-500' : 'bg-yellow-500'"
             class="text-white font-bold py-2 px-4 rounded"
