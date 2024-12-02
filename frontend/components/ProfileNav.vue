@@ -1,10 +1,31 @@
 <script setup lang="ts">
+import { ref, onMounted } from 'vue'
 
 const client = useSupabaseClient()
 const user = useSupabaseUser()
 const userData = user.value?.user_metadata
 const userName = userData?.username
 
+const PFP = ref([])
+PFP.value = "https://firebasestorage.googleapis.com/v0/b/filmify-c99db.firebasestorage.app/o/userImages%2Fdefault-pfp.png?alt=media";    
+const userInfo = ref([])
+const user_id = ref([])
+const fetchUserInfo = async () => {
+  user_id.value = user.value?.id
+  if (!user_id.value) return;
+
+  const { data, error } = await client.rpc('getuserinfo', { user_id: user_id.value });
+  if (error) {
+    console.error('Error fetching user info:', error);
+  } else {
+    userInfo.value = data[0];
+    if(userInfo.value.profile_image_url != ''){
+      
+      PFP.value = userInfo.value.profile_image_url;
+    } 
+  }
+};
+onMounted(fetchUserInfo)
 const logout = async () => {
   const { error } = await client.auth.signOut()
   if (error) {
@@ -62,7 +83,7 @@ const isOpenModal = ref(false)
     <UDropdown mode="click" :items="itemsProfile">
       <UAvatar
         size="sm"
-        src="https://avatars.githubusercontent.com/u/113581734?v=4"
+        :src="PFP"
         class="cursor-pointer"
       />
       <template #account="{ item }">
