@@ -2,19 +2,22 @@
   <main>
     <section>
       <div v-if="!movieTitle || forum_exist === null" class="text-center">
-        <p class="text-gray-500 text-lg">Loading forum...</p>
+
+
+        <p id="loading-forum" class="text-gray-500 text-lg">Loading forum...</p>
       </div>
 
       <div v-else>
-        <div v-if="forum_exist">
+        <div v-if="forum_exist" id="forum-exists">
           <!-- Forum Title -->
-          <div class="flex justify-between items-center mb-6">
+          <div id="forum-header" class="flex justify-between items-center mb-6">
             <div>
-                <h1 class="text-4xl font-bold">{{ forum[0]?.name }}</h1>
-                <h3 class="">{{ forum[0]?.description }}</h3>
+                <h1 id="forum-name" class="text-4xl font-bold">{{ forum[0]?.name }}</h1>
+                <h3 id="forum-description" class="">{{ forum[0]?.description }}</h3>
             </div>
             <div>
               <UButton 
+                id="post-button"
                 v-if="user" 
                 class="mx-auto px-8"
                 color="purple"
@@ -27,7 +30,9 @@
           </div>
 
           <!-- Posts Container -->
-          <div class="container mx-auto mt-6">
+
+          <div id="posts-container" class="container mx-auto mt-6">
+
             <div class="space-y-6">
               <!-- Loop through posts -->
               <PostCard @change-vote="changeVote"
@@ -38,7 +43,9 @@
             </div>
           </div>
         </div>
-        <div v-else>
+
+        <div v-else id="forum-not-available">
+
           <div class="flex justify-between items-center mb-6">
             <h1 class="text-4xl font-bold"> El Foro de la película {{ movieTitle }} aun no está disponible.</h1>
           </div>
@@ -80,6 +87,7 @@
         <!-- Botones -->
         <div class="flex justify-end gap-4">
           <UButton @click="closeModal" class=" px-4" color="gray" size="md">Cancelar</UButton>
+          <br/>
           <UButton @click="submitPost" class=" px-4" color="purple" size="md">Post</UButton>
         </div>
       </div>
@@ -256,5 +264,6 @@ onMounted(set_UserId);
 
 
 </script>
+  
   
   

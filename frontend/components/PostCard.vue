@@ -50,6 +50,7 @@ const props = defineProps({
 
 const emit = defineEmits(['change-vote'])
 
+
 const changeVote = (vote_type: boolean) => {
   emit('change-vote', props.post, vote_type)
 };
