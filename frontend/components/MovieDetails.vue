@@ -21,7 +21,7 @@
             :alt="movie.title"
             class="md:w-1/3 w-full aspect-[2/3] object-cover rounded-lg"
           />
-          <div class="flex flex-col md:w-2/3">
+          <div class="flex flex-col mt-8 md:w-2/3">
             <NuxtRating
               class="flex w-full justify-center mb-4"
               :read-only="true"
@@ -29,7 +29,15 @@
               :rating-size="30"
               :activeColor="'#800080'"
             />
-            <p class="text-gray-500 text-lg md:text-xl">{{ movie.overview }}</p>
+            <p class="text-gray-500 text-lg md:text-xl my-4">{{ movie.overview }}</p>
+            <UButton
+              @click="goToForum"
+              class="mx-auto px-8"
+              color="purple"
+              size="xl"
+            >
+              Foro
+            </UButton>
           </div>
         </div>
 
@@ -78,6 +86,15 @@ import { useRoute } from 'vue-router';
 const route = useRoute();
 const client = useSupabaseClient();
 const movieID = route.query.id;
+const movieTitle = route.params.id;
+const forumLink = `/movies/${movieTitle}/forum?id=${movieID}`;
+
+const goToForum = () => {
+  navigateTo({
+    path: forumLink,
+    query: { id: route.query.id },
+  });
+};
 
 const movie = ref(null); // Start with null to indicate loading
 const genres = ref(null);
