@@ -52,7 +52,17 @@
                 </div>
               </div>
             </div>
-            <p class="text-gray-500 text-lg md:text-xl mt-4">{{ movie.overview }}</p>
+            <p class="text-gray-500 text-lg md:text-xl my-4" id="movie-overview">{{ movie?.overview || 'No overview available.' }}</p>
+            <!-- Botó per anar al fòrum -->
+            <UButton
+              @click="goToForum"
+              class="mx-auto px-8 mt-6"
+              color="purple"
+              size="xl"
+              id="forum-button"
+            >
+              Foro
+            </UButton>
           </div>
         </div>
 
