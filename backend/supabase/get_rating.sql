@@ -1,7 +1,7 @@
 create or replace function get_rating(user_id uuid, movie_id bigint)
 returns integer as $$
 declare
-  rating integer;
+  puntuacion integer;
 begin
   -- Comprova si la pel·lícula existeix
   if not exists (select 1 from "Peliculas" where id = movie_id) then
@@ -13,11 +13,11 @@ begin
 
   -- Comprova si l'usuari ha valorat la pel·lícula
   elsif exists (select 1 from "Valoraciones" where user_fk = user_id and movie_fk = movie_id) then
-    select puntuacion into rating
-    from "Ratings"
+    select rating into puntuacion
+    from "Valoraciones"
     where user_fk = user_id and movie_fk = movie_id;
 
-    return rating; -- Retorna el valor de la puntuació
+    return puntuacion; -- Retorna el valor de la puntuació
   else
     return null; -- Retorna NULL si no hi ha valoració
   end if;
