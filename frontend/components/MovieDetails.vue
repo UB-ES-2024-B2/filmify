@@ -32,12 +32,25 @@
                 :rating-size="30"
                 :activeColor="'#800080'"
               />
-              <button
-                @click="openRatingModal"
-                class="bg-purple-600 text-white font-bold py-2 px-4 rounded"
-              >
-                Valorar
-              </button>
+              <!-- Botón para valorar o eliminar valoración -->
+              <div>
+                <button
+                  v-if="!hasRated"
+                  @click="openRatingModal"
+                  class="bg-purple-600 text-white font-bold py-2 px-4 rounded"
+                >
+                  Valorar
+                </button>
+                <div v-else>
+                  <p class="text-gray-700">Tu valoración: {{ userRating }}</p>
+                  <button
+                    @click="openDeleteModal"
+                    class="bg-red-600 text-white font-bold py-2 px-4 rounded mt-2"
+                  >
+                    Eliminar valoración
+                  </button>
+                </div>
+              </div>
             </div>
             <p class="text-gray-500 text-lg md:text-xl my-4" id="movie-overview">{{ movie?.overview || 'No overview available.' }}</p>
             <!-- Botó per anar al fòrum -->
@@ -53,13 +66,15 @@
           </div>
         </div>
 
-        <!-- Modal per valorar pel·lícula -->
+        <!-- Modal para valoración -->
+
         <div
           v-if="isRatingModalOpen"
           class="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50"
         >
           <div class="bg-white p-6 rounded-md w-96">
             <h2 class="text-xl font-semibold mb-4 text-center">Valora esta película</h2>
+
             <div class="flex justify-center">
               <NuxtRating
                 :read-only="false"
@@ -69,6 +84,7 @@
                 :ratingValue="userRating"
               />
             </div>
+
             <div class="flex justify-end gap-4 mt-4">
               <button
                 @click="closeRatingModal"
@@ -85,9 +101,61 @@
             </div>
           </div>
         </div>
+        <!-- Modal para confirmar eliminación de valoración -->
+        <div
+          v-if="isDeleteModalOpen"
+          class="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50"
+        >
+          <div class="bg-white p-6 rounded-md w-96 text-center">
+            <h2 class="text-xl font-semibold mb-4 text-red-600">Confirmar eliminación</h2>
+            <p class="text-gray-700 mb-4">
+              ¿Estás seguro de que quieres quitar tu valoración?
+            </p>
+            <div class="flex justify-center gap-4">
+              <button
+                @click="closeDeleteModal"
+                class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-700"
+              >
+                Cancelar
+              </button>
+              <button
+                @click="deleteRating"
+                class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-800"
+              >
+                Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
 
-        <!-- Botons per Favorits i Wishlist -->
+        <!-- Modal para error de login -->
+        <div
+          v-if="loginError"
+          class="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50"
+        >
+          <div class="bg-white p-6 rounded-md w-96 text-center">
+            <h2 class="text-xl font-semibold mb-4 text-red-600">¡Error!</h2>
+            <p class="text-gray-700 mb-4">Necesitas iniciar sesión para valorar esta película.</p>
+            <div class="flex justify-center gap-4">
+              <button
+                @click="closeLoginError"
+                class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-700"
+              >
+                Cerrar
+              </button>
+              <button
+                @click="goToLogin"
+                class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-800"
+              >
+                Ir a Login
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Botón de favoritos -->
         <div class="mt-4 flex justify-center gap-4">
+
           <button
             v-if="userID"
             @click="toggleFavorite"
@@ -336,13 +404,34 @@ const toggleFavorite = async () => {
 const isRatingModalOpen = ref(false); // Controla el estado del modal
 const userRating = ref(0); // Valoración seleccionada por el usuario
 const loginError = ref(false); // Controla si el mensaje de error está visible
+const isDeleteModalOpen = ref(false);
+const hasRated = ref(false); // Controla si el usuario ha valorado la película
+
+const fetchUserRating = async () => {
+  try {
+    const { data, error } = await client.rpc('get_rating', {
+      user_id: userID.value,
+      movie_id: movieID,
+    });
+
+    if (error) {
+      console.error('Error al obtener la valoración del usuario:', error);
+    } else if (data !== null) {
+      userRating.value = data;
+      hasRated.value = true;
+    } else {
+      hasRated.value = false;
+    }
+  } catch (err) {
+    console.error('Error inesperado al obtener la valoración:', err);
+  }
+};
 
 const goToLogin = () => {
   // Usa el enrutador para redirigir al usuario a la página de inicio de sesión
   const router = useRouter();
   router.push('/login');
 };
-
 
 const updateRating = (rating) => {
   console.log('Valor seleccionado:', rating); // Verifica el valor seleccionado
@@ -389,12 +478,42 @@ const submitRating = async () => {
       console.error('Error enviando la valoración:', error);
       alert('Hubo un problema al enviar tu valoración.');
     } else if (data) {
+
+      hasRated.value = true;
       //alert(data.message); // Mensaje de éxito del backend
+
       closeRatingModal(); // Cierra el modal tras guardar
     }
   } catch (err) {
     console.error('Error inesperado:', err);
     alert('Hubo un error inesperado al enviar tu valoración.');
+  }
+};
+
+const openDeleteModal = () => {
+  isDeleteModalOpen.value = true;
+};
+
+const closeDeleteModal = () => {
+  isDeleteModalOpen.value = false;
+};
+
+const deleteRating = async () => {
+  try {
+    const { data, error } = await client.rpc('removemovierating', {
+      user_id: userID.value,
+      movie_id: movieID,
+    });
+
+    if (error) {
+      console.error('Error al eliminar la valoración:', error);
+    } else {
+      hasRated.value = false;
+      userRating.value = 0;
+      closeDeleteModal();
+    }
+  } catch (err) {
+    console.error('Error inesperado:', err);
   }
 };
 
@@ -469,6 +588,7 @@ onMounted(async () => {
   await fetchUserId(); // Esperar que fetchUserId termine antes de llamar a checkIfFavorited
   await checkIfFavorited(); // Llamar a checkIfFavorited después de que userID esté disponible
   await checkIfWished();
+  await fetchUserRating();
 
 });
 
