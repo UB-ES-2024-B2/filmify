@@ -470,7 +470,7 @@ const submitRating = async () => {
     } else if (data) {
 
       hasRated.value = true;
-      alert(data.message); // Mensaje de éxito del backend
+      //alert(data.message); // Mensaje de éxito del backend
 
       closeRatingModal(); // Cierra el modal tras guardar
     }
