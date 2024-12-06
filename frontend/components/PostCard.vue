@@ -7,7 +7,7 @@
 
       <!-- Botón de eliminar post -->
       <UButton
-        v-if="user"
+        v-if="post.owner"
         variant="ghost"
         color="red"
         hoverColor="red.800"
@@ -59,7 +59,7 @@
         <!-- Botones -->
         <div class="flex justify-center gap-4">
           <UButton @click="closeModal" class="px-4" color="gray" size="md">Cancelar</UButton>
-          <UButton class="px-4" color="red" size="md">Eliminar</UButton>
+          <UButton @click="deletePost" class="px-4" color="red" size="md">Eliminar</UButton>
         </div>
       </div>
     </div>
@@ -94,11 +94,17 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['change-vote'])
+const emit = defineEmits(['change-vote','delete-post'])
 
 const changeVote = (vote_type: boolean) => {
   emit('change-vote', props.post, vote_type)
 };
+
+const deletePost = () => {
+  emit('delete-post', props.post)
+  closeModal();
+};
+
 </script>
 
 <style scoped>
