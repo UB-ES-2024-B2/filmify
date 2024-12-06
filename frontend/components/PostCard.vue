@@ -1,13 +1,28 @@
 <template>
   <div class="bg-white shadow-md rounded-md p-4 mb-6 w-full">
     <!-- Titulo del post -->
-    <h2 class="text-xl font-semibold mb-2">{{ post.title }}</h2>
+    <div class="flex justify-between items-center mb-4">
+      <!-- Titulo del post -->
+      <h2 class="text-xl font-semibold">{{ post.title }}</h2>
+
+      <!-- Botón de eliminar post -->
+      <UButton
+        v-if="user"
+        variant="ghost"
+        color="red"
+        hoverColor="red.800"
+        class="flex items-center gap-0"
+        @click="openModal"
+      >
+        <Icon name="ph:x-bold" class="w-6 h-6" />
+      </UButton>
+    </div>
 
     <!-- Contenido del post -->
     <p class="text-gray-600 mb-4">{{ post.content }}</p>
 
     <!-- Autor del post -->
-    <p class="text-sm text-gray-500 mb-4">Posted by: <span class="font-semibold">{{ post.username }}</span></p>
+    <p class="text-sm text-gray-500 mb-4">Publicado por: <span class="font-semibold">{{ post.username }}</span></p>
 
     <!-- Botones de upvote y downvote -->
     <div class="flex items-center justify-center">
@@ -32,12 +47,43 @@
         </svg>
       </button>
     </div>
+
+    <!-- Modal -->
+    <div 
+      v-if="isModalOpen" 
+      class="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50"
+    >
+      <div class="bg-white p-6 rounded-md w-110">
+        <h2 class="text-md font-semibold mb-4">¿Estás seguro de eliminar este post?</h2>
+
+        <!-- Botones -->
+        <div class="flex justify-center gap-4">
+          <UButton @click="closeModal" class="px-4" color="gray" size="md">Cancelar</UButton>
+          <UButton class="px-4" color="red" size="md">Eliminar</UButton>
+        </div>
+      </div>
+    </div>
+
   </div>
 </template>
 
 <script setup lang="ts">
 import { defineProps, ref } from 'vue';
 import { useSupabaseUser } from '#imports';
+
+// Estado de modal
+const isModalOpen = ref(false);
+
+// Abre modal
+const openModal = () => {
+  isModalOpen.value = true;
+};
+
+// Cierra modal
+const closeModal = () => {
+  isModalOpen.value = false;
+
+};
 
 const user = useSupabaseUser();
 
@@ -49,7 +95,6 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['change-vote'])
-
 
 const changeVote = (vote_type: boolean) => {
   emit('change-vote', props.post, vote_type)
