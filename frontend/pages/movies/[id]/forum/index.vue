@@ -83,22 +83,33 @@
             placeholder="Escribe tu comentario"
           ></textarea>
         </div>
+        
+        <div class="mb-4" v-if="postImage">
+          <img :src="postImage" class="rounded img-fluid" alt="...">
+        </div>
+
+        <div style="margin-top: 2mm;">
+          <input class="flex" type="file" accept="image/*" @change="onFileChange" />
+        </div>
 
         <!-- Botones -->
         <div class="flex justify-end gap-4">
           <UButton @click="closeModal" class=" px-4" color="gray" size="md">Cancelar</UButton>
           <br/>
-          <UButton @click="submitPost" class=" px-4" color="purple" size="md">Post</UButton>
+          <UButton :disabled="BtnSubmitPost" @click="submitPost" class=" px-4" color="purple" size="md">Post</UButton>
         </div>
       </div>
     </div>
   </main>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useRoute } from 'vue-router';
 import { useSupabaseUser } from '#imports';
 import { ref, onMounted } from 'vue';
+import { ref as storage_Ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+
+const { $storage } = useNuxtApp();
 
 useHead({
   title: 'Forum',
@@ -122,8 +133,10 @@ const newPost = ref({
   content: '',
 });
 
+const BtnSubmitPost = ref(false)
 // Abre modal
 const openModal = () => {
+  BtnSubmitPost.value = false;
   isModalOpen.value = true;
 };
 
@@ -131,14 +144,22 @@ const openModal = () => {
 const closeModal = () => {
   isModalOpen.value = false;
   newPost.value = { title: '', content: '' }; // Resetea modal
+  postImage.value = null;
 };
 
 // Handle post submission
 const submitPost = () => {
+  BtnSubmitPost.value = true;
   if (newPost.value.title && newPost.value.content) {
-    fetchCreatePost();
-    closeModal(); // Cierra tras publicar
+    if (postImage) {
+      uploadImage()
+    }
+    else{
+      fetchCreatePost()
+      closeModal(); // Cierra tras publicar
+    }
   } else {
+    BtnSubmitPost.value = false;
     alert('Escribe título y comentario.');
   }
 };
@@ -261,6 +282,72 @@ const set_UserId  = () => {
 };
 
 onMounted(set_UserId);
+
+
+const postImage = ref(null);
+const file = ref(null);
+
+const onFileChange = (event: Event) => {
+  const input = event.target as HTMLInputElement;
+  if (input.files && input.files[0]) {
+    file.value = input.files[0];
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+      postImage.value = e.target?.result as string;
+    };
+
+    reader.readAsDataURL(file.value);
+  }
+}
+
+
+const maxSize = 5 * 1024 * 1024; // 5 MB
+const uploadImage = async () => {
+  try {
+    const upload_file = file.value
+
+    if (upload_file == null) {
+      throw new Error('No has seleccionado la imagen.')
+    }
+    if (upload_file.size > maxSize){
+      throw new Error('La imagen supera el límite de 5MB.')
+    }
+    if (!upload_file.type.startsWith('image/')) {
+      throw new Error('Solo se permiten archivos de imagen.');
+    }
+
+    const fileName = upload_file.name;
+    const fileExtension = fileName.substring(fileName.lastIndexOf('.') + 1);
+
+    const storageRef = storage_Ref($storage, 'postsImages/' + movieId + u_id.value + Date.now() + "." + fileExtension);
+ 
+    const snapshot = await uploadBytes(storageRef,upload_file);
+    console.log('Imagen subida:', snapshot);
+
+
+    const downloadURL = await getDownloadURL(storageRef);
+
+    fetchCreatePostWithImage(downloadURL.split('&token')[0]);
+    closeModal();
+
+  } catch (error) {
+    console.error('Error al subir la imagen:', error);
+    alert(error.message); // Mensaje de error para el usuario
+    closeModal();
+  }
+}
+
+const fetchCreatePostWithImage = async (url) => {
+  const { error } = await client.rpc('create_post',{title: newPost.value.title, content: newPost.value.content, input_movie_id: parseInt(movieId, 10), user_id: u_id.value, image: url});
+
+  if (error) {
+    console.error('Error al crear el post:', error);
+  } 
+  else {
+    fetchPostsForum();
+  }
+};
 
 
 </script>
