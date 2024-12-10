@@ -84,7 +84,7 @@
           ></textarea>
         </div>
         
-        <div class="mb-4" v-if="postImage">
+        <div class="mb-4" v-if="boolImagePost">
           <img :src="postImage" class="rounded img-fluid" alt="...">
         </div>
 
@@ -145,13 +145,16 @@ const closeModal = () => {
   isModalOpen.value = false;
   newPost.value = { title: '', content: '' }; // Resetea modal
   postImage.value = null;
+  boolImagePost.value = false;
 };
+
+const boolImagePost = ref(false);
 
 // Handle post submission
 const submitPost = () => {
   BtnSubmitPost.value = true;
   if (newPost.value.title && newPost.value.content) {
-    if (postImage) {
+    if (boolImagePost.value) {
       uploadImage()
     }
     else{
@@ -298,6 +301,7 @@ const onFileChange = (event: Event) => {
     };
 
     reader.readAsDataURL(file.value);
+    boolImagePost.value = true;
   }
 }
 
