@@ -5,8 +5,8 @@
 
     <form @submit.prevent="updatePassword">
       <!-- Error and Success Alerts -->
-      <ErrorAlert :error-msg="authError" @clearError="clearError" />
-      <SuccessAlert :success-msg="authSuccess" @clearSuccess="clearSuccess" />
+      <ErrorAlert id='error' :error-msg="authError" @clearError="clearError" />
+      <SuccessAlert id='success' :success-msg="authSuccess" @clearSuccess="clearSuccess" />
 
       <!-- Password Inputs -->
       <div class="jGQTZC">
