@@ -3,7 +3,7 @@ returns boolean as $$
 begin
   if not  exists (select 1 from "Posts" where "Posts".id = input_post_id) THEN 
     return false;
-  elsif not exists ( select 1 from "Usuarios Auth" where id = input_user_id) THEN 
+  elsif not exists ( select 1 from "Posts" where "Posts".author_id = input_user_id and "Posts".id = input_post_id) THEN 
     return false;
   else
     delete from "Posts"
