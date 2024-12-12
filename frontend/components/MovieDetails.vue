@@ -12,7 +12,7 @@
         <div class="text-center">
           <h1 class="text-4xl font-bold mb-2" id="movie-title">{{ movie?.title || 'Loading' }}</h1>
           <p class="text-gray-500" id="movie-release-rating">
-            {{ movie?.release_date || 'N/A' }} | Rating: {{ movie?.vote_average || 'N/A' }}
+            {{ movie?.release_date || 'N/A' }} | Rating: {{ movie?.vote_average || 'N/A' }} / 5
           </p>
         </div>
 
@@ -28,7 +28,7 @@
               <NuxtRating
                 class="flex"
                 :read-only="true"
-                :ratingValue="(movie.vote_average / 10) * 5"
+                :ratingValue="movie.vote_average"
                 :rating-size="30"
                 :activeColor="'#800080'"
               />
@@ -247,6 +247,7 @@ const fetchMovieDetails = async () => {
       console.error('Error fetching movie details:', error);
     } else if (data && data.length > 0) {
       movie.value = data[0];
+      movie.value.vote_average = Math.round(movie.value.vote_average * 10) / 10;
     } else {
       console.warn('No data returned for the given movie ID');
     }
