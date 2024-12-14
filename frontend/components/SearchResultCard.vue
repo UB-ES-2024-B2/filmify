@@ -16,7 +16,10 @@
         />
       </div>
       
-      <button @click="goToMovieDetail" class="text-blue-500 hover:underline mt-3">
+      <button
+        @click="goToMovieDetails"
+        class="text-purple-800 hover:underline mt-3"
+      >
         Ver detalles
       </button>
     </div>
@@ -27,18 +30,23 @@
 import { defineProps } from 'vue';
 import { useRouter } from 'vue-router';
 
+const router = useRouter();
+
+const goToMovieDetails = () => {
+  router.push({
+    path: `/movies/${props.movie.title.replace(/\s+/g, '-').toLowerCase()}`,
+    query: { id: props.movie.id },
+  }).then(() => {
+    window.location.reload(); 
+  });
+};
+
 const props = defineProps({
   movie: {
     type: Object,
     required: true,
   },
 });
-
-const router = useRouter();
-
-const goToMovieDetail = () => {
-  router.push(`/movies/${props.movie.id}`);
-};
 </script>
 
 <style scoped>

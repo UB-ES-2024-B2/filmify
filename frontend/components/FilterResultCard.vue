@@ -1,5 +1,5 @@
 <template>
-  <div class="flex items-start gap-4">
+  <div @click='goToDetails' class="flex items-start gap-4">
     <img :src="movie.poster_url" alt="Poster" class="w-24 h-36 object-cover rounded-md" />
     <div>
       <h3 class="text-lg font-semibold">{{ movie.title }}</h3>
@@ -11,7 +11,18 @@
 </template>
 
 <script setup lang="ts">
-defineProps({
-  movie: Object,
+
+const props = defineProps({
+  movie: {
+    type: Object,
+    required: true,
+  },
 });
+
+const goToDetails = () => {
+  navigateTo({
+    path: `/movies/${props.movie.title.replace(/\s+/g, '-').toLowerCase()}`,
+    query: { id: props.movie.id },
+  });
+};
 </script>
