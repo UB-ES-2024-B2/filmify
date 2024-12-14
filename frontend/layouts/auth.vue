@@ -7,7 +7,7 @@
           <div class="dgrFox">
             <NuxtLink
                 :to="{ path: '/'}"
-                class="text-5xl font-bold dark:text-white text-purple-800 font-display"
+                class="text-5xl font-bold text-purple-800 font-display"
             >
               Filmify 🎞️
             </NuxtLink>
