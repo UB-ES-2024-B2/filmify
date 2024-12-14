@@ -1,8 +1,13 @@
 <template>
   <main class="px-10 overflow-y-auto page xl:px-12">
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      rel="stylesheet"
+    />
     <section
       class="container mx-auto flex flex-col gap-5 items-center justify-center mt-6 scroll-mt-[120px] min-h-screen"
     >
+
       <!-- Contingut principal -->
       <div v-if="!movie" class="text-center">
         <p class="text-gray-500 text-lg" id="loading-message">Loading movie details...</p>
@@ -37,17 +42,19 @@
                 <button
                   v-if="!hasRated"
                   @click="openRatingModal"
-                  class="bg-purple-600 text-white font-bold py-2 px-4 rounded"
+                  class="bg-purple-600 text-white font-bold py-2 px-4 rounded flex items-center space-x-2"
                 >
-                  Valorar
+                  <i class="fas fa-star"></i>
+                  <span>Valorar</span>
                 </button>
                 <div v-else>
                   <p class="text-gray-700">Tu valoración: {{ userRating }}</p>
                   <button
                     @click="openDeleteModal"
-                    class="bg-red-600 text-white font-bold py-2 px-4 rounded mt-2"
+                    class="bg-red-600 text-white font-bold py-2 px-4 rounded rounded flex items-center space-x-2"
                   >
-                    Eliminar valoración
+                    <i class="far fa-star"></i>
+                    <span>Eliminar valoración</span> 
                   </button>
                 </div>
               </div>
@@ -61,7 +68,8 @@
               size="xl"
               id="forum-button"
             >
-              Foro
+              <i class="fas fa-comments"></i>
+              <span>Foro</span>
             </UButton>
           </div>
         </div>
@@ -138,7 +146,7 @@
             <p class="text-gray-700 mb-4">Necesitas iniciar sesión para valorar esta película.</p>
             <div class="flex justify-center gap-4">
               <button
-                @click="closeLoginError"
+                @click="closeRatingModal"
                 class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-700"
               >
                 Cerrar
@@ -155,24 +163,29 @@
 
         <!-- Botón de favoritos -->
         <div class="mt-4 flex justify-center gap-4">
-
+          <!-- Botón de favoritos -->
           <button
             v-if="userID"
             @click="toggleFavorite"
             :class="isFavorited ? 'bg-red-500' : 'bg-green-500'"
-            class="text-white font-bold py-2 px-4 rounded"
+            class="flex items-center text-white font-bold py-2 px-4 rounded space-x-2"
           >
-            {{ isFavorited ? 'Eliminar de favoritos' : 'Añadir a favoritos' }}
+            <i :class="isFavorited ? 'fas fa-heart' : 'far fa-heart'"></i>
+            <span>{{ isFavorited ? 'Eliminar de favoritos' : 'Añadir a favoritos' }}</span>
           </button>
+
+          <!-- Botón de wishlist -->
           <button
             v-if="userID"
             @click="toggleWish"
             :class="isWished ? 'bg-blue-500' : 'bg-yellow-500'"
-            class="text-white font-bold py-2 px-4 rounded"
+            class="flex items-center text-white font-bold py-2 px-4 rounded space-x-2"
           >
-            {{ isWished ? 'Eliminar de wishlist' : 'Añadir a wishlist' }}
+            <i :class="isWished ? 'fas fa-list' : 'far fa-list-alt'"></i>
+            <span>{{ isWished ? 'Eliminar de wishlist' : 'Añadir a wishlist' }}</span>
           </button>
         </div>
+
 
         <!-- Informació de la pel·lícula -->
         <div class="mt-8 bg-gray-200 p-4 rounded-lg w-full" id="movie-info">
@@ -447,7 +460,6 @@ const openRatingModal = () => {
   }
   isRatingModalOpen.value = true;
 };
-
 
 
 // Cierra el modal de valoración
