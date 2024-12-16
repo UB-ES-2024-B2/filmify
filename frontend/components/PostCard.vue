@@ -21,6 +21,11 @@
     <!-- Contenido del post -->
     <p class="text-gray-600 mb-4">{{ post.content }}</p>
 
+    <!-- Imagen del post -->
+    <div v-if="post.image" justify-center items-center>
+      <img :src="post.image" class="rounded" alt="Imagen del Post">
+    </div>
+
     <!-- Autor del post -->
     <p class="text-sm text-gray-500 mb-4">Publicado por: <span class="font-semibold">{{ post.username }}</span></p>
 
