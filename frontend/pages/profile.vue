@@ -340,7 +340,7 @@ const uploadImage = async () => {
 
     const downloadURL = await getDownloadURL(storageRef);
 
-    await fetchAddPFP(downloadURL.split('&token')[0]);
+    fetchAddPFP(downloadURL.split('&token')[0]);
   } catch (error) {
     console.error('Error al subir la imagen:', error);
     alert(error.message); // Mensaje de error para el usuario

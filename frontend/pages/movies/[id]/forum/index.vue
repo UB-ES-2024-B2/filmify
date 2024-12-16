@@ -338,7 +338,7 @@ const uploadImage = async () => {
 
     const downloadURL = await getDownloadURL(storageRef);
 
-    await fetchCreatePostWithImage(downloadURL.split('&token')[0]);
+    fetchCreatePostWithImage(downloadURL.split('&token')[0]);
 
   } catch (error) {
     console.error('Error al subir la imagen:', error);
