@@ -60,15 +60,21 @@
       class="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50"
       style="z-index: 10000;"
     >
-      <div class="bg-white p-6 rounded-md w-96">
-        <h2 class="text-xl font-semibold mb-4">Modificar Foto de Perfil</h2>
-        <img :src="newPFP" class="rounded img-fluid" alt="...">
-        <div style="margin-top: 2mm;">
-          <input class="flex" type="file" accept="image/*" @change="onFileChange" />
+    <div class="bg-white p-6 rounded-md w-96">
+        <div v-if="isSubmitting" class="flex justify-center items-center space-x-2">
+          <div class="w-8 h-8 border-4 border-t-4 border-gray-200 border-solid rounded-full animate-spin border-t-purple-600"></div>
+            <p class="text-gray-500">Subiendo la imagen...</p>
         </div>
-        <div class="flex justify-center gap-4" style="margin-top: 2mm;">
-          <UButton @click="closeModal" class="px-4" color="gray" size="md">Cancelar</UButton>
-          <UButton @click="submitPFP" class="px-4" color="purple" size="md">Modificar</UButton>
+        <div v-else>
+          <h2 class="text-xl font-semibold mb-4">Modificar Foto de Perfil</h2>
+          <img :src="newPFP" class="rounded img-fluid" alt="...">
+          <div style="margin-top: 2mm;">
+            <input class="flex" type="file" accept="image/*" @change="onFileChange" />
+          </div>
+          <div class="flex justify-center gap-4" style="margin-top: 2mm;">
+            <UButton @click="closeModal" class="px-4" color="gray" size="md">Cancelar</UButton>
+            <UButton @click="submitPFP" class="px-4" color="purple" size="md">Modificar</UButton>
+          </div>
         </div>
       </div>
     </div>
@@ -227,10 +233,16 @@ const openModal = () => {
   isModalOpen.value = true;
 };
 
-const new_pfp_url = ref(null)
-const submitPFP = () => {
-  uploadImage();
+const new_pfp_url = ref(null);
+
+const isSubmitting = ref(false); 
+
+const submitPFP = async () => {
+  isSubmitting.value = true; 
+  await uploadImage();
+  isSubmitting.value = false; 
   isModalOpen.value = false;
+  window.location.reload();
 };
 
 // Cierra modal
@@ -303,7 +315,7 @@ const onFileChange = (event: Event) => {
 
 
 const maxSize = 5 * 1024 * 1024; // 5 MB
-async function uploadImage() {
+const uploadImage = async () => {
   try {
     const upload_file = file.value
 
@@ -320,7 +332,7 @@ async function uploadImage() {
     const fileName = upload_file.name;
     const fileExtension = fileName.substring(fileName.lastIndexOf('.') + 1);
 
-    const storageRef = storage_Ref($storage, 'userImages/' + user_id.value + "." + fileExtension);
+    const storageRef = storage_Ref($storage, 'userImages/' + user_id.value + ".png");
 
     const snapshot = await uploadBytes(storageRef,upload_file);
     console.log('Imagen subida:', snapshot);
@@ -328,7 +340,7 @@ async function uploadImage() {
 
     const downloadURL = await getDownloadURL(storageRef);
 
-    fetchAddPFP(downloadURL.split('&token')[0]);
+    await fetchAddPFP(downloadURL.split('&token')[0]);
   } catch (error) {
     console.error('Error al subir la imagen:', error);
     alert(error.message); // Mensaje de error para el usuario
@@ -341,11 +353,7 @@ const fetchAddPFP = async (url) => {
   const { data, error } = await client.rpc('add_profile_pic', { input_user_id: user_id.value, image: url });
 
   if (error) {
-    console.error('Error fetching wishlist:', error);
-  } else {
-    if (data) {
-      window.location.reload();
-    }
+    console.error('Error al añadir la imagen de perfil:', error);
   }
 };
 

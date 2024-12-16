@@ -1,14 +1,17 @@
 <template>
-  <div class="bg-white shadow-md rounded-md p-4 mb-6 w-full">
+  <div class="bg-white shadow-md rounded-md p-4 mb-6 w-full max-w-xl lg:max-w-3xl mx-auto">
     <!-- Titulo del post -->
-    <h2 class="text-xl font-semibold mb-2">{{ post.title }}</h2>
+    <h2 class="text-xl font-semibold mb-2 truncate whitespace-normal break-words">{{ post.title }}</h2>
 
     <!-- Contenido del post -->
-    <p class="text-gray-600 mb-4">{{ post.content }}</p>
+    <p class="text-gray-600 mb-4 line-clamp-6 whitespace-normal break-words">{{ post.content }}</p>
 
     <!-- Imagen del post -->
-    <div v-if="post.image" justify-center items-center>
-      <img :src="post.image" class="rounded" alt="Imagen del Post">
+    <div v-if="post.image" class="h-80 overflow-hidden w-full rounded">
+      <img 
+        :src="post.image" 
+        class="w-full h-full object-contain bg-transparent" 
+        alt="Imagen del Post">
     </div>
 
     <!-- Autor del post -->
