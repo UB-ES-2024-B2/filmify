@@ -29,7 +29,7 @@
     <!-- Stats -->
     <div class="flex-shrink-0 flex flex-row md:flex-col justify-around text-center md:items-center gap-4 md:gap-2">
       <div>
-        <p class="text-2xl font-bold text-purple-800">{{ averageRating }}</p>
+        <p class="text-2xl font-bold text-purple-800">{{ averageRating || 'N/A' }}</p>
         <p class="text-xs text-gray-500">Rating promedio</p>
       </div>
     </div>
