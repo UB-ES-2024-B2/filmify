@@ -213,7 +213,6 @@ const fetchUserPosts = async () => {
     console.error('Error al obtener los posts del usuario:', error);
   } else {
     userPosts.value = data;
-    console.info(userPosts)
   }
 };
 
