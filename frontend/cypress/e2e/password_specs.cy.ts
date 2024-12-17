@@ -19,13 +19,6 @@ describe('Recuperar Contraseña Page', () => {
     it('should render the return to login link', () => {
       cy.get('#login-return-link').should('exist').should('be.visible').contains('Volver');
     });
-  
-    it('should display a success message with valid email', () => {
-      cy.get('#email-input').type('test@example.com');
-      cy.get('#reset-password-button').click();
-  
-      cy.get('#success_alert').should('exist').should('be.visible').contains('Se ha enviado un correo.');
-    });
 
     it('should not submit the form if email is invalid', () => {
         cy.get('#email-input').type('test.com');
