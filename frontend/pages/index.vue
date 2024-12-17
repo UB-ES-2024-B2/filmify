@@ -58,11 +58,32 @@
             </li>
           </ul>
         </div>
-        <!-- Lugar vacío para la US 25 -->
+
+        <!-- Posts más valorados -->
         <div>
           <h3 class="text-xl font-semibold mb-4 text-center">Posts más valorados</h3>
-          <p class="text-gray-500 text-center">Próximamente...</p>
+          <ul class="space-y-4">
+            <li
+              v-for="post in top_posts"
+              :key="post.post_id"
+              class="bg-gray-100 p-4 rounded shadow overflow-hidden h-[150px] w-full flex justify-between items-center"
+            >
+              <div>
+                <h4 class="font-bold truncate">{{ post.title }}</h4>
+                <p class="text-gray-600 text-sm truncate">{{ post.username }}</p>
+                <p class="mt-2 whitespace-normal break-words text-sm overflow-hidden">
+                  {{ post.content }}
+                </p>
+              </div>
+              <!-- Votos -->
+              <div class="flex flex-col items-center text-purple-600 font-bold">
+                <span class="text-sm">Votos</span>
+                <span class="text-2xl">{{ post.votes }}</span>
+              </div>
+            </li>
+          </ul>
         </div>
+
       </div>
     </section>
   </main>
@@ -129,7 +150,25 @@ const fetchRecentPosts = async () => {
   else recent_posts.value = data;
 };
 
-onMounted(fetchNewestMovies);
-onMounted(fetchPopularMovies);
-fetchRecentPosts();
+
+
+const top_posts = ref([]);
+
+// Función para obtener los posts más valorados
+const fetchTopPosts = async () => {
+  const { data, error } = await client.rpc('get_top_posts', { length: 5 });
+  if (error) {
+    console.error('Error al obtener posts más valorados:', error);
+  } else {
+    top_posts.value = data;
+  }
+};
+
+
+onMounted(() => {
+  fetchNewestMovies();
+  fetchPopularMovies();
+  fetchRecentPosts();
+  fetchTopPosts();
+});
 </script>

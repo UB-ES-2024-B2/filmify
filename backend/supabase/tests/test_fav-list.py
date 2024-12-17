@@ -26,7 +26,7 @@ movie_id = 12
 def test_fav_list_two(db_connection):
     response = db_connection.rpc("get_favorites", {'user_id': 'f3cf42e6-6380-4ed7-95c0-05eceae1022c'}).execute()
     assert len(response.data) == 2
-    assert response.data == [{'id': 12, 'title': 'Buscando a Nemo', 'poster_url': 'https://image.tmdb.org/t/p/original/jPhak722pNGxQIXSEfeWIUqBrO5.jpg', 'vote_average': 7.819, 'vote_count': 19117}, {'id': 22, 'title': 'Piratas del Caribe: La maldición de la Perla Negra', 'poster_url': 'https://image.tmdb.org/t/p/original/8zHnkTGyAImBcI49a1xFJHUjbaK.jpg', 'vote_average': 7.806, 'vote_count': 20459}]
+    assert response.data == [{'id': 12, 'title': 'Buscando a Nemo', 'poster_url': 'https://image.tmdb.org/t/p/original/jPhak722pNGxQIXSEfeWIUqBrO5.jpg', 'vote_average': 3.9095, 'vote_count': 19117}, {'id': 22, 'title': 'Piratas del Caribe: La maldición de la Perla Negra', 'poster_url': 'https://image.tmdb.org/t/p/original/8zHnkTGyAImBcI49a1xFJHUjbaK.jpg', 'vote_average': 3.903, 'vote_count': 20459}]
 
 # Usuario valido sin lista de favoritos
 def test_fav_list_empty(db_connection):

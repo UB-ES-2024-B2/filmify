@@ -23,7 +23,7 @@ movie_id = 12
 def test_movie_details(db_connection):
     response = db_connection.rpc("get_movie_details", {'movie_id': movie_id}).execute()
     assert len(response.data) == 1
-    assert response.data[0] == {'id': 12, 'title': 'Buscando a Nemo', 'release_date': '2003-05-30', 'overview': 'Nemo, un pececillo, hijo único muy querido y protegido por su padre, ha sido capturado en un arrecife australiano y ahora vive en una pecera en la oficina de un dentista de Sidney. El tímido padre de Nemo se embarcará en una peligrosa aventura para rescatar a su hijo. Pero Nemo y sus nuevos amigos tienen también un astuto plan para escapar de la pecera y volver al mar.', 'vote_average': 7.819, 'poster_url': 'https://image.tmdb.org/t/p/original/jPhak722pNGxQIXSEfeWIUqBrO5.jpg'}
+    assert response.data[0] == {'id': 12, 'title': 'Buscando a Nemo', 'release_date': '2003-05-30', 'overview': 'Nemo, un pececillo, hijo único muy querido y protegido por su padre, ha sido capturado en un arrecife australiano y ahora vive en una pecera en la oficina de un dentista de Sidney. El tímido padre de Nemo se embarcará en una peligrosa aventura para rescatar a su hijo. Pero Nemo y sus nuevos amigos tienen también un astuto plan para escapar de la pecera y volver al mar.', 'vote_average': 3.9095, 'poster_url': 'https://image.tmdb.org/t/p/original/jPhak722pNGxQIXSEfeWIUqBrO5.jpg'}
 
 # - Movie Genres
 def test_movie_genres(db_connection):

@@ -36,6 +36,7 @@ def test_update_vote_post_no_existing_vote(db_connection):
         'input_post_id': 40,
         'vote': True
     }).execute()
+    print(response.data)
     assert response.data == False
 
 def test_vote_post_invalid_post(db_connection):
