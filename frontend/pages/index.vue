@@ -58,6 +58,7 @@
             </li>
           </ul>
         </div>
+
         <!-- Posts más valorados -->
         <div>
           <h3 class="text-xl font-semibold mb-4 text-center">Posts más valorados</h3>
@@ -82,7 +83,6 @@
             </li>
           </ul>
         </div>
-
 
       </div>
     </section>
@@ -149,6 +149,8 @@ const fetchRecentPosts = async () => {
   if (error) console.error('Error al obtener posts recientes:', error);
   else recent_posts.value = data;
 };
+
+
 
 const top_posts = ref([]);
 
