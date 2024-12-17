@@ -23,6 +23,7 @@ const fetchUserInfo = async () => {
       
       PFP.value = userInfo.value.profile_image_url;
     } 
+    itemsProfile[0][0].label = userInfo.value.user_name;
   }
 };
 onMounted(fetchUserInfo)

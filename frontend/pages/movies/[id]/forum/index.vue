@@ -10,16 +10,16 @@
       <div v-else>
         <div v-if="forum_exist" id="forum-exists">
           <!-- Forum Title -->
-          <div id="forum-header" class="flex justify-between items-center mb-6">
+          <div id="forum-header" class="flex justify-between items-center ml-6 mb-6">
             <div>
-                <h1 id="forum-name" class="text-4xl font-bold">{{ forum[0]?.name }}</h1>
+                <h1 id="forum-name" class="text-4xl font-bold mt-6 mb-6">{{ forum[0]?.name }}</h1>
                 <h3 id="forum-description" class="">{{ forum[0]?.description }}</h3>
             </div>
             <div>
               <UButton 
                 id="post-button"
                 v-if="user" 
-                class="mx-auto px-8"
+                class="mx-auto px-8 ml-6 mr-6"
                 color="purple"
                 size="xl"
                 @click="openModal"
@@ -35,7 +35,7 @@
 
             <div class="space-y-6">
               <!-- Loop through posts -->
-              <PostCard @change-vote="changeVote"
+              <PostCard @change-vote="changeVote" @delete-post="fetchDeletePost"
                 v-for="(post, index) in posts"
                 :key="index"
                 :post="post"
@@ -59,46 +59,63 @@
       class="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50"
     >
       <div class="bg-white p-6 rounded-md w-96">
-        <h2 class="text-xl font-semibold mb-4">Crea un post</h2>
-
-        <!-- Input Título -->
-        <div class="mb-4">
-          <label for="title" class="block text-sm font-medium text-gray-700">Título</label>
-          <input 
-            v-model="newPost.title" 
-            type="text" 
-            id="title" 
-            class="mt-1 block w-full border border-gray-300 rounded-md p-2"
-            placeholder="Escribe el título del post"
-          />
+        <div v-if="isSubmitting" class="flex justify-center items-center space-x-2">
+          <div class="w-8 h-8 border-4 border-t-4 border-gray-200 border-solid rounded-full animate-spin border-t-purple-600"></div>
+            <p class="text-gray-500">Subiendo el post...</p>
         </div>
+        <div v-else>
+          <h2 class="text-xl font-semibold mb-4">Crea un post</h2>
 
-        <!-- Input comentario-->
-        <div class="mb-4">
-          <label for="content" class="block text-sm font-medium text-gray-700">Comentario</label>
-          <textarea
-            v-model="newPost.content"
-            id="content"
-            class="mt-1 block w-full border border-gray-300 rounded-md p-2"
-            placeholder="Escribe tu comentario"
-          ></textarea>
-        </div>
+          <!-- Input Título -->
+          <div class="mb-4">
+            <label for="title" class="block text-sm font-medium text-gray-700">Título</label>
+            <input 
+              v-model="newPost.title" 
+              type="text" 
+              id="title" 
+              class="mt-1 block w-full border border-gray-300 rounded-md p-2"
+              placeholder="Escribe el título del post"
+            />
+          </div>
 
-        <!-- Botones -->
-        <div class="flex justify-end gap-4">
-          <UButton @click="closeModal" class=" px-4" color="gray" size="md">Cancelar</UButton>
-          <br/>
-          <UButton @click="submitPost" class=" px-4" color="purple" size="md">Post</UButton>
+          <!-- Input comentario-->
+          <div class="mb-4">
+            <label for="content" class="block text-sm font-medium text-gray-700">Comentario</label>
+            <textarea
+              v-model="newPost.content"
+              id="content"
+              class="mt-1 block w-full border border-gray-300 rounded-md p-2"
+              placeholder="Escribe tu comentario"
+            ></textarea>
+          </div>
+
+          <div class="mb-4" v-if="boolImagePost">
+            <img :src="postImage" class="rounded img-fluid" alt="...">
+          </div>
+
+          <div style="margin-top: 2mm;">
+            <input class="flex" type="file" accept="image/*" @change="onFileChange" />
+          </div>
+
+          <!-- Botones -->
+          <div class="flex justify-end gap-4">
+            <UButton @click="closeModal" class=" px-4" color="gray" size="md">Cancelar</UButton>
+            <br/>
+            <UButton @click="submitPost" class=" px-4" color="purple" size="md">Post</UButton>
+          </div>
         </div>
       </div>
     </div>
   </main>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useRoute } from 'vue-router';
 import { useSupabaseUser } from '#imports';
 import { ref, onMounted } from 'vue';
+import { ref as storage_Ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+
+const { $storage } = useNuxtApp();
 
 useHead({
   title: 'Forum',
@@ -131,13 +148,26 @@ const openModal = () => {
 const closeModal = () => {
   isModalOpen.value = false;
   newPost.value = { title: '', content: '' }; // Resetea modal
+  postImage.value = null;
+  boolImagePost.value = false;
 };
 
+const boolImagePost = ref(false);
+
+const isSubmitting = ref(false); 
+
 // Handle post submission
-const submitPost = () => {
+const submitPost = async () => {
+
   if (newPost.value.title && newPost.value.content) {
-    fetchCreatePost();
-    closeModal(); // Cierra tras publicar
+    isSubmitting.value = true; 
+    if (boolImagePost.value) {
+      await uploadImage();
+    } else {
+      await fetchCreatePost(); 
+    }
+    isSubmitting.value = false;  
+    closeModal();  // Cierra el modal tras publicar
   } else {
     alert('Escribe título y comentario.');
   }
@@ -178,6 +208,17 @@ const fetchCreatePost = async () => {
 
   if (error) {
     console.error('Error al crear el post:', error);
+  } 
+  else {
+    fetchPostsForum();
+  }
+};
+
+const fetchDeletePost = async (post) => {
+  const { error } = await client.rpc('delete_post_by_id',{ input_post_id: post.post_id, input_user_id: u_id.value});
+
+  if (error) {
+    console.error('Error al eliminar el post:', error);
   } 
   else {
     fetchPostsForum();
@@ -261,6 +302,71 @@ const set_UserId  = () => {
 };
 
 onMounted(set_UserId);
+
+
+const postImage = ref(null);
+const file = ref(null);
+
+const onFileChange = (event: Event) => {
+  const input = event.target as HTMLInputElement;
+  if (input.files && input.files[0]) {
+    file.value = input.files[0];
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+      postImage.value = e.target?.result as string;
+    };
+
+    reader.readAsDataURL(file.value);
+    boolImagePost.value = true;
+  }
+}
+
+
+const maxSize = 5 * 1024 * 1024; // 5 MB
+const uploadImage = async () => {
+  try {
+    const upload_file = file.value
+
+    if (upload_file == null) {
+      throw new Error('No has seleccionado la imagen.')
+    }
+    if (upload_file.size > maxSize){
+      throw new Error('La imagen supera el límite de 5MB.')
+    }
+    if (!upload_file.type.startsWith('image/')) {
+      throw new Error('Solo se permiten archivos de imagen.');
+    }
+
+    const fileName = upload_file.name;
+    const fileExtension = fileName.substring(fileName.lastIndexOf('.') + 1);
+
+    const storageRef = storage_Ref($storage, 'postsImages/' + movieId + u_id.value + Date.now() + "." + fileExtension);
+ 
+    const snapshot = await uploadBytes(storageRef,upload_file);
+    console.log('Imagen subida:', snapshot);
+
+
+    const downloadURL = await getDownloadURL(storageRef);
+
+    fetchCreatePostWithImage(downloadURL.split('&token')[0]);
+
+  } catch (error) {
+    console.error('Error al subir la imagen:', error);
+    alert(error.message); // Mensaje de error para el usuario
+  }
+}
+
+const fetchCreatePostWithImage = async (url) => {
+  const { error } = await client.rpc('create_post',{title: newPost.value.title, content: newPost.value.content, input_movie_id: parseInt(movieId, 10), user_id: u_id.value, image: url});
+
+  if (error) {
+    console.error('Error al crear el post:', error);
+  } 
+  else {
+    fetchPostsForum();
+  }
+};
 
 
 </script>

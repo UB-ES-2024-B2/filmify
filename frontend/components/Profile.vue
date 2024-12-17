@@ -7,8 +7,15 @@
         :src="userData.profile_image_url"
         alt="Profile Image"
       />
-      <UButton style="margin-top: 2mm;" @click="modifyPFP" class=" px-4" color="purple" size="md">Modificar</UButton>
-    </div>
+      <link
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+        rel="stylesheet"
+      />
+
+      <UButton style="margin-top: 2mm;" @click="modifyPFP" class="flex items-center px-4" color="purple" size="md">
+        <i class="fas fa-camera mr-2"></i>Modificar
+      </UButton>
+ </div>
 
     <!-- Profile Info -->
     <div class="flex-grow text-center md:text-left">
@@ -19,17 +26,19 @@
       <UButton
         style="margin-top: 10px;"
         @click="notifyProfileUpdated"
-        class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-800"
+        class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-800 flex items-center space-x-2"
         size="md"
       >
-        Editar perfil
+        <i class="fas fa-pencil-alt"></i>
+        <span>Editar perfil</span>
       </UButton>
+
     </div>
 
     <!-- Stats -->
     <div class="flex-shrink-0 flex flex-row md:flex-col justify-around text-center md:items-center gap-4 md:gap-2">
       <div>
-        <p class="text-2xl font-bold text-purple-800">{{ averageRating }}</p>
+        <p class="text-2xl font-bold text-purple-800">{{ averageRating || 'N/A' }}</p>
         <p class="text-xs text-gray-500">Rating promedio</p>
       </div>
     </div>

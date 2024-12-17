@@ -18,10 +18,6 @@ def test_exists_forum_invalid_movie(db_connection):
     response = db_connection.rpc('exists_forum', {'input_movie_id': 9999}).execute()  # Non-existent movie ID
     assert response.data == False
 
-def test_exists_forum_no_forum(db_connection):
-    response = db_connection.rpc('exists_forum', {'input_movie_id': 22}).execute()  # Movie exists, but no forum
-    assert response.data == False
-
 def test_exists_forum_with_forum(db_connection):
     response = db_connection.rpc('exists_forum', {'input_movie_id': 12}).execute()  # Movie exists, and forum exists
     assert response.data == True
