@@ -23,7 +23,7 @@ def db_connection():
 def test_wish_list_two(db_connection):
     response = db_connection.rpc("get_wishlist", {'user_id': 'f3cf42e6-6380-4ed7-95c0-05eceae1022c'}).execute()
     assert len(response.data) == 2
-    assert response.data == [{'id': 12, 'title': 'Buscando a Nemo', 'poster_url': 'https://image.tmdb.org/t/p/original/jPhak722pNGxQIXSEfeWIUqBrO5.jpg', 'vote_average': 7.819, 'vote_count': 19117}, {'id': 24, 'title': 'Kill Bill: Volumen 1', 'poster_url': 'https://image.tmdb.org/t/p/original/lfj709InbmljVqAXgUk2qjnujNN.jpg', 'vote_average': 7.971, 'vote_count': 17257}]
+    assert response.data == [{'id': 12, 'title': 'Buscando a Nemo', 'poster_url': 'https://image.tmdb.org/t/p/original/jPhak722pNGxQIXSEfeWIUqBrO5.jpg', 'vote_average': 3.9095, 'vote_count': 19117}, {'id': 24, 'title': 'Kill Bill: Volumen 1', 'poster_url': 'https://image.tmdb.org/t/p/original/lfj709InbmljVqAXgUk2qjnujNN.jpg', 'vote_average': 3.9855, 'vote_count': 17257}]
 
 # Usuario sin Wishlist
 def test_wish_list_empty(db_connection):
