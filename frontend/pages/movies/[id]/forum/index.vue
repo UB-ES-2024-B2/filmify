@@ -10,16 +10,16 @@
       <div v-else>
         <div v-if="forum_exist" id="forum-exists">
           <!-- Forum Title -->
-          <div id="forum-header" class="flex justify-between items-center mb-6">
+          <div id="forum-header" class="flex justify-between items-center ml-6 mb-6">
             <div>
-                <h1 id="forum-name" class="text-4xl font-bold">{{ forum[0]?.name }}</h1>
+                <h1 id="forum-name" class="text-4xl font-bold mt-6 mb-6">{{ forum[0]?.name }}</h1>
                 <h3 id="forum-description" class="">{{ forum[0]?.description }}</h3>
             </div>
             <div>
               <UButton 
                 id="post-button"
                 v-if="user" 
-                class="mx-auto px-8"
+                class="mx-auto px-8 ml-6 mr-6"
                 color="purple"
                 size="xl"
                 @click="openModal"
@@ -59,44 +59,50 @@
       class="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50"
     >
       <div class="bg-white p-6 rounded-md w-96">
-        <h2 class="text-xl font-semibold mb-4">Crea un post</h2>
-
-        <!-- Input Título -->
-        <div class="mb-4">
-          <label for="title" class="block text-sm font-medium text-gray-700">Título</label>
-          <input 
-            v-model="newPost.title" 
-            type="text" 
-            id="title" 
-            class="mt-1 block w-full border border-gray-300 rounded-md p-2"
-            placeholder="Escribe el título del post"
-          />
+        <div v-if="isSubmitting" class="flex justify-center items-center space-x-2">
+          <div class="w-8 h-8 border-4 border-t-4 border-gray-200 border-solid rounded-full animate-spin border-t-purple-600"></div>
+            <p class="text-gray-500">Subiendo el post...</p>
         </div>
+        <div v-else>
+          <h2 class="text-xl font-semibold mb-4">Crea un post</h2>
 
-        <!-- Input comentario-->
-        <div class="mb-4">
-          <label for="content" class="block text-sm font-medium text-gray-700">Comentario</label>
-          <textarea
-            v-model="newPost.content"
-            id="content"
-            class="mt-1 block w-full border border-gray-300 rounded-md p-2"
-            placeholder="Escribe tu comentario"
-          ></textarea>
-        </div>
-        
-        <div class="mb-4" v-if="boolImagePost">
-          <img :src="postImage" class="rounded img-fluid" alt="...">
-        </div>
+          <!-- Input Título -->
+          <div class="mb-4">
+            <label for="title" class="block text-sm font-medium text-gray-700">Título</label>
+            <input 
+              v-model="newPost.title" 
+              type="text" 
+              id="title" 
+              class="mt-1 block w-full border border-gray-300 rounded-md p-2"
+              placeholder="Escribe el título del post"
+            />
+          </div>
 
-        <div style="margin-top: 2mm;">
-          <input class="flex" type="file" accept="image/*" @change="onFileChange" />
-        </div>
+          <!-- Input comentario-->
+          <div class="mb-4">
+            <label for="content" class="block text-sm font-medium text-gray-700">Comentario</label>
+            <textarea
+              v-model="newPost.content"
+              id="content"
+              class="mt-1 block w-full border border-gray-300 rounded-md p-2"
+              placeholder="Escribe tu comentario"
+            ></textarea>
+          </div>
 
-        <!-- Botones -->
-        <div class="flex justify-end gap-4">
-          <UButton @click="closeModal" class=" px-4" color="gray" size="md">Cancelar</UButton>
-          <br/>
-          <UButton :disabled="BtnSubmitPost" @click="submitPost" class=" px-4" color="purple" size="md">Post</UButton>
+          <div class="mb-4" v-if="boolImagePost">
+            <img :src="postImage" class="rounded img-fluid" alt="...">
+          </div>
+
+          <div style="margin-top: 2mm;">
+            <input class="flex" type="file" accept="image/*" @change="onFileChange" />
+          </div>
+
+          <!-- Botones -->
+          <div class="flex justify-end gap-4">
+            <UButton @click="closeModal" class=" px-4" color="gray" size="md">Cancelar</UButton>
+            <br/>
+            <UButton @click="submitPost" class=" px-4" color="purple" size="md">Post</UButton>
+          </div>
         </div>
       </div>
     </div>
@@ -133,10 +139,8 @@ const newPost = ref({
   content: '',
 });
 
-const BtnSubmitPost = ref(false)
 // Abre modal
 const openModal = () => {
-  BtnSubmitPost.value = false;
   isModalOpen.value = true;
 };
 
@@ -150,19 +154,21 @@ const closeModal = () => {
 
 const boolImagePost = ref(false);
 
+const isSubmitting = ref(false); 
+
 // Handle post submission
-const submitPost = () => {
-  BtnSubmitPost.value = true;
+const submitPost = async () => {
+
   if (newPost.value.title && newPost.value.content) {
+    isSubmitting.value = true; 
     if (boolImagePost.value) {
-      uploadImage()
+      await uploadImage();
+    } else {
+      await fetchCreatePost(); 
     }
-    else{
-      fetchCreatePost()
-      closeModal(); // Cierra tras publicar
-    }
+    isSubmitting.value = false;  
+    closeModal();  // Cierra el modal tras publicar
   } else {
-    BtnSubmitPost.value = false;
     alert('Escribe título y comentario.');
   }
 };
@@ -344,12 +350,10 @@ const uploadImage = async () => {
     const downloadURL = await getDownloadURL(storageRef);
 
     fetchCreatePostWithImage(downloadURL.split('&token')[0]);
-    closeModal();
 
   } catch (error) {
     console.error('Error al subir la imagen:', error);
     alert(error.message); // Mensaje de error para el usuario
-    closeModal();
   }
 }
 
