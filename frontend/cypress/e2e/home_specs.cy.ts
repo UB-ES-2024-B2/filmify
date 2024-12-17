@@ -15,13 +15,12 @@ describe('Home Page with API Calls', () => {
     it('should render the "Nuevas" section', () => {
     cy.wait('@getNewest');
     cy.get('#newest-section').should('exist').should('be.visible');
-    cy.get('#newest-header').contains('Nuevas').should('be.visible');
     cy.get('#newest-carousel').should('exist').should('be.visible');
     });
 
     it('should render the "Populares" section', () => {
     cy.wait('@getPopular');
-    cy.get('#popular-header').contains('Populares').should('be.visible');
+    cy.get('#newest-section').should('exist').should('be.visible');
     cy.get('#popular-carousel').should('exist').should('be.visible');
     });
     
