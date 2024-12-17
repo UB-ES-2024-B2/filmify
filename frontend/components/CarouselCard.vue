@@ -28,7 +28,7 @@ const goToDetails = () => {
       class="absolute inset-0 bg-black bg-opacity-50 flex flex-col justify-end p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
     >
       <h3 class="text-white text-lg font-semibold truncate">{{ item.title }}</h3>
-      <p class="text-gray-300 text-sm">{{ item.vote_average.toFixed(1) }} / 10</p>
+      <p class="text-gray-300 text-sm">{{ item.vote_average.toFixed(1) }} / 5</p>
 
     </div>
   </div>
