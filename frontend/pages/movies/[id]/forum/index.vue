@@ -35,7 +35,7 @@
 
             <div class="space-y-6">
               <!-- Loop through posts -->
-              <PostCard @change-vote="changeVote"
+              <PostCard @change-vote="changeVote" @delete-post="fetchDeletePost"
                 v-for="(post, index) in posts"
                 :key="index"
                 :post="post"
@@ -208,6 +208,17 @@ const fetchCreatePost = async () => {
 
   if (error) {
     console.error('Error al crear el post:', error);
+  } 
+  else {
+    fetchPostsForum();
+  }
+};
+
+const fetchDeletePost = async (post) => {
+  const { error } = await client.rpc('delete_post_by_id',{ input_post_id: post.post_id, input_user_id: u_id.value});
+
+  if (error) {
+    console.error('Error al eliminar el post:', error);
   } 
   else {
     fetchPostsForum();

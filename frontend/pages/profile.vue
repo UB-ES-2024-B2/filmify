@@ -51,6 +51,34 @@
         <template v-else>
           <EmptyCarouselCard />
         </template>
+        <!-- Posts -->
+        <h2 class="text-2xl font-display">Publicaciones</h2>
+        <template v-if="userPosts.length > 0">
+          <UCarousel
+            class="px-10 mb-8"
+            v-slot="{ item, index }"
+            :items="userPosts"  
+            :ui="{
+              wrapper: 'w-full flex justify-center',
+              container: 'flex justify-center gap-5',
+              item: 'h-[150px] w-[225px]',
+            }"
+            arrows
+          >
+            <CarouselPost :item="item" :index="index" />
+          </UCarousel>
+        </template>
+        <template v-else>
+          <div 
+            class="bg-white p-6 rounded-lg shadow text-center mb-8 cursor-pointer hover:shadow-lg transition-shadow duration-200"
+            @click="goToHome"
+          >
+            <h3 class="text-xl font-semibold text-gray-800 mb-2"> Explora los foros </h3>
+            <p class="text-gray-600 hover:text-purple-600 transition-colors duration-200">
+              Todavía no has publicado nada. ¡Participa en la comunidad!
+            </p>
+          </div>
+        </template>
       </section>
     </div>
 
@@ -133,9 +161,10 @@ definePageMeta({
   layout: "home"
 });
 
-// Reactive lists for favorites and wishlist
+// Reactive lists for favorites and wishlist and posts
 const fav_list = ref([]);
 const wish_list = ref([]);
+const userPosts = ref([]);
 
 // Reactive user ID
 const user_id = ref(null);
@@ -186,6 +215,18 @@ const fetchWishList = async () => {
   }
 };
 
+// Obtener los posts del usuario
+const fetchUserPosts = async () => {
+  if (!user_id.value) return;
+
+  const { data, error } = await client.rpc('get_user_posts', { input_user_id: user_id.value });
+  if (error) {
+    console.error('Error al obtener los posts del usuario:', error);
+  } else {
+    userPosts.value = data;
+  }
+};
+
 
 const fetchAverageRating = async () => {
   const { data, error } = await useSupabaseAuthClient().rpc('calculate_mean_rating', { user_id: user_id.value });
@@ -203,6 +244,7 @@ onMounted(async () => {
     await fetchWishList();
     await fetchUserInfo();
     await fetchAverageRating();
+    await fetchUserPosts();
   }
 });
 
@@ -355,6 +397,12 @@ const fetchAddPFP = async (url) => {
   if (error) {
     console.error('Error al añadir la imagen de perfil:', error);
   }
+};
+
+const goToHome = () => {
+  navigateTo({
+    path: '/', // Redirect to the home page
+  });
 };
 
 </script>
