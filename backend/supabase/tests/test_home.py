@@ -27,11 +27,14 @@ def setup_database(db_connection):
         {"title": "Jarhead, el infierno espera", "release_date": "2005-11-04", "vote_count": 2845},
         {"title": "Los Simpson: La película", "release_date": "2007-07-25", "vote_count": 7909},
     ]).execute()
-def test_empty_database_newest_movies(db_connection):
+@pytest.fixture
+def empty_database(db_connection):
+    db_connection.rpc('delete_peliculas_test').execute()
+def test_empty_database_newest_movies(db_connection, empty_database):
     response = db_connection.rpc("get_newest_movies_test", {'length': 5}).execute()
     assert len(response.data) == 0
 
-def test_empty_database_popular_movies(db_connection):
+def test_empty_database_popular_movies(db_connection, empty_database):
     response = db_connection.rpc("get_popular_movies_test", {'length': 5}).execute()
     assert len(response.data) == 0
 
@@ -60,3 +63,4 @@ def test_get_newest_movies_less_than_expected(db_connection, setup_database):
 def test_get_popular_movies_less_than_expected(db_connection, setup_database):
     response = db_connection.rpc("get_popular_movies_test", {'length': 10}).execute()
     assert len(response.data) == 5
+
