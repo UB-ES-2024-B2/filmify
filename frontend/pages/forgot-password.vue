@@ -2,8 +2,8 @@
   <div class="DaoRb">
     <h1 class="eSHwvX">Recuperar contraseña</h1>
     <form @submit.prevent="resetPassword">
-      <ErrorAlert :error-msg="authError" @clearError="clearError" />
-      <SuccessAlert :success-msg="authSuccess" @clearSuccess="clearSuccess" />
+      <ErrorAlert id='error_alert' :error-msg="authError" @clearError="clearError" />
+      <SuccessAlert id='success_alert' :success-msg="authSuccess" @clearSuccess="clearSuccess" />
       <div class="jGQTZC">
         <div class="fdCSlG">
           <UInput 
