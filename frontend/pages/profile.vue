@@ -69,9 +69,14 @@
           </UCarousel>
         </template>
         <template v-else>
-          <div class="bg-white p-6 rounded-lg shadow text-center mb-8">  <!-- Añadido mb-8 aquí -->
-            <h3 class="text-xl font-semibold text-gray-800 mb-2">Explora los foros</h3>
-            <p class="text-gray-600">Todavía no has publicado nada. ¡Participa en la comunidad!</p>
+          <div 
+            class="bg-white p-6 rounded-lg shadow text-center mb-8 cursor-pointer hover:shadow-lg transition-shadow duration-200"
+            @click="goToHome"
+          >
+            <h3 class="text-xl font-semibold text-gray-800 mb-2"> Explora los foros </h3>
+            <p class="text-gray-600 hover:text-purple-600 transition-colors duration-200">
+              Todavía no has publicado nada. ¡Participa en la comunidad!
+            </p>
           </div>
         </template>
       </section>
@@ -384,6 +389,12 @@ const fetchAddPFP = async (url) => {
       window.location.reload();
     }
   }
+};
+
+const goToHome = () => {
+  navigateTo({
+    path: '/', // Redirect to the home page
+  });
 };
 
 </script>
