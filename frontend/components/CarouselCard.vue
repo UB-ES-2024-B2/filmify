@@ -29,6 +29,7 @@ const goToDetails = () => {
     >
       <h3 class="text-white text-lg font-semibold truncate">{{ item.title }}</h3>
       <p class="text-gray-300 text-sm">{{ item.vote_average.toFixed(1) }} / 10</p>
+
     </div>
   </div>
 </template>
