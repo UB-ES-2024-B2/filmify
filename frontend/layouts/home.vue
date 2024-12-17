@@ -1,10 +1,11 @@
 <template>
     <div class="buJnuC">
         <div class="fvfNpo">
+            <Header />
             <div class="uXyMu">
-                <Header />
                 <slot />
             </div>
+            <Footer/>
         </div>
     </div>
 </template>
