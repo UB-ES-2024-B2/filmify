@@ -31,7 +31,7 @@ const goToDetails = () => {
       <NuxtRating
         class="flex w-full justify-center"
         :read-only="true"
-        :ratingValue="(item.vote_average / 10) * 5"
+        :ratingValue="item.vote_average"
         :activeColor="'#800080'"
       />
     </div>
